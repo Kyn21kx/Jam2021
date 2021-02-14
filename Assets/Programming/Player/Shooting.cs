@@ -10,10 +10,13 @@ public class Shooting : MonoBehaviour {
     [SerializeField]
     private float shootingSpeed;
     private Camera cam;
+    [SerializeField]
+    private AI personBuffer;
     #endregion
 
     private void Start() {
         cam = Camera.main;
+        personBuffer = null;
     }
 
     private void Update() {
