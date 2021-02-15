@@ -69,6 +69,7 @@ public class Matching : MonoBehaviour {
     /// </summary>
     public void Pair(Matching other) {
         ReduceByMatch(other);
+        other.ReduceByMatch(this);
         //Check that every single category is 0 before we pair
         Debug.Log("Paired!");
         Paired = men <= 0 && women <= 0 && nonBi <= 0;
