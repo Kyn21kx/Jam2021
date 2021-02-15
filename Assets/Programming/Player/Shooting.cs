@@ -36,9 +36,20 @@ public class Shooting : MonoBehaviour {
             if (personBuffer.OpenForMatch && personRef.OpenForMatch) {
                 var match1 = personRef.MatchRef;
                 var match2 = personBuffer.MatchRef;
-                
-                if (match1.Match(match2))
+
+                if (match1.Match(match2)) {
                     match1.Pair(match2);
+                    //Clean them and reset their states
+                    personRef.movRef.canMove = true;
+                    personRef.movRef.ResumePath();
+                    
+                    personBuffer.movRef.canMove = true;
+                    personBuffer.movRef.ResumePath();
+                    
+                    personRef.StopAllCoroutines();
+                    personBuffer.StopAllCoroutines();
+                    personBuffer = null;
+                }
             
             }
         }
