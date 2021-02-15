@@ -24,4 +24,13 @@ public class Projectile : MonoBehaviour {
             Destroy(gameObject);
     }
 
+    private bool Detect() {
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.forward, 1f, LayerMask.GetMask("Haters"));
+        if (hit.transform != null) {
+            //hit.transform.GetComponent<Health>().Damage(1, transform.position);
+            return true;
+        }
+        return false;
+    }
+
 }

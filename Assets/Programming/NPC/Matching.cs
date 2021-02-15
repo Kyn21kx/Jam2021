@@ -58,8 +58,25 @@ public class Matching : MonoBehaviour {
         return true;
     }
 
-    public void Pair() {
-        
+    /// <summary>
+    /// Reduces an element from the match and pairs the two couples
+    /// </summary>
+    public void Pair(Matching other) {
+        ReduceByMatch(other);
+    }
+
+    private void ReduceByMatch(Matching other) {
+        switch (other.GenderId) {
+            case Gender.Man:
+                men--;
+                break;
+            case Gender.Woman:
+                women--;
+                break;
+            case Gender.NonBinary:
+                nonBi--;
+                break;
+        }
     }
 
 }
