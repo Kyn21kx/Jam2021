@@ -50,6 +50,9 @@ public class Shooting : MonoBehaviour {
                     personBuffer.StopAllCoroutines();
                     personBuffer = null;
                 }
+                else {
+                    //Make 'em go crazy
+                }
             
             }
         }

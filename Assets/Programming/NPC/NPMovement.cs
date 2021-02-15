@@ -13,14 +13,12 @@ public class NPMovement : MonoBehaviour {
     #region Variables
     [SerializeField]
     private float speed;
-    [SerializeField]
-    private Transform targetPosHolder;
     private Rigidbody2D rig;
-    [SerializeField]
-    private float detectionRange;
     private AIPath path;
     private AIDestinationSetter agent;
     public bool canMove;
+
+    public Transform TargetPosHolder { get { return agent.target; } }
     #endregion
 
     private void Start() {
@@ -32,20 +30,25 @@ public class NPMovement : MonoBehaviour {
     }
 
     public void Move(Vector2 position) {
-        if (!canMove) return;
-        targetPosHolder.position = position;
-        agent.target = targetPosHolder;
+        if (canMove)
+            TargetPosHolder.position = position;
+    }
+
+    public bool HasArrived(Vector2 position, float threshold) {
+        return Vector2.Distance(transform.position, position) <= threshold;
     }
 
     public void Stop() {
         rig.velocity = Vector2.zero;
         path.maxSpeed = 0f;
+        path.canSearch = false;
         path.canMove = false;
     }
 
     public void ResumePath() {
         path.maxSpeed = speed;
         path.canMove = true;
+        path.canSearch = true;
     }
 
 }

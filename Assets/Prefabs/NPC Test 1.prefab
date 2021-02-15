@@ -150,6 +150,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movRef: {fileID: 0}
+  currState: 0
+  detectionRange: 10
+  targetMask:
+    serializedVersion: 2
+    m_Bits: 1536
 --- !u!50 &6248478452662877807
 Rigidbody2D:
   serializedVersion: 4
@@ -230,7 +235,7 @@ MonoBehaviour:
   rotationSpeed: 360
   slowdownDistance: 0.6
   pickNextWaypointDist: 2
-  endReachedDistance: 0.2
+  endReachedDistance: 0.5
   alwaysDrawGizmos: 0
   slowWhenNotFacingTarget: 1
   whenCloseToDestination: 0
@@ -248,7 +253,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   version: 1
-  target: {fileID: 0}
+  target: {fileID: 6248478451742325663}
 --- !u!114 &6248478452662877796
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -261,9 +266,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e28d3980b7aa8d4b97c10cb31460415, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 1
-  targetPosHolder: {fileID: 6248478451742325663}
-  detectionRange: 0
+  speed: 10
   canMove: 0
 --- !u!114 &6248478452662877805
 MonoBehaviour:
