@@ -12,15 +12,18 @@ public class Shooting : MonoBehaviour {
     private Camera cam;
     [SerializeField]
     private AI personBuffer;
+    private Matching[] matches;
     #endregion
 
     private void Start() {
         cam = Camera.main;
         personBuffer = null;
+        matches = FindObjectsOfType<Matching>();
+        Debug.Log(matches[0].Match(matches[1]));
     }
 
     private void Update() {
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonDown(0))
             Shoot();
     }
 
