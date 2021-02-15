@@ -20,7 +20,7 @@ public class Projectile : MonoBehaviour {
     private void Update() {
         cntr += Time.deltaTime;
         transform.Translate(dir * travelSpeed * Time.deltaTime);
-        if (cntr >= 5f)
+        if (cntr >= 5f || Detect())
             Destroy(gameObject);
     }
 
