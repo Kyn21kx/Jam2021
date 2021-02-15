@@ -18,8 +18,6 @@ public class Projectile : MonoBehaviour {
         this.travelSpeed = travelSpeed;
         this.shootingRef = shootingRef;
         this.travelDistance = travelDistance;
-        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
     }
 
     //Destroy after a period of time
