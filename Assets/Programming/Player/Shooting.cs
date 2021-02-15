@@ -11,17 +11,38 @@ public class Shooting : MonoBehaviour {
     private float shootingSpeed;
     private Camera cam;
     public AI personBuffer;
+    private float holdTime;
+    private bool holding;
     #endregion
 
     private void Start() {
         cam = Camera.main;
         personBuffer = null;
+        holdTime = 0f;
+        holding = false;
     }
 
     private void Update() {
         //TODO: Add cooldown
+        HoldShoot();
+    }
+
+    private void HoldShoot() {
         if (Input.GetMouseButtonDown(0))
-            Shoot();
+            holding = true;
+        if (holding && Input.GetMouseButtonUp(0)) {
+            //d = x^(1.5f) - (x/2)
+            //Graphics to show it
+            float d = Mathf.Pow(holdTime, 1.5f) - (holdTime / 3f);
+            d = Mathf.Clamp(d, 0f, 6f);
+            Debug.LogWarning("Distance: " + d);
+            holding = false;
+            holdTime = 0f;
+            Shoot(d);
+        }
+        //Increment x 
+        if (holding)
+            holdTime += Time.deltaTime;
     }
 
     public void BufferPerson(AI personRef) {
@@ -58,13 +79,14 @@ public class Shooting : MonoBehaviour {
         }
     }
 
-    private void Shoot() {
+    private void Shoot(float distance) {
         //Instantiate the prefab to the mouse's position
         Vector2 mousePos = cam.ScreenToWorldPoint(Input.mousePosition);
         Vector2 dir = mousePos - (Vector2)transform.position;
         var instance = Instantiate(projectile, transform.position, Quaternion.identity);
         Projectile projInstance = instance.GetComponent<Projectile>();
-        projInstance.Initiate(dir.normalized, shootingSpeed, this);
+        //t = v / d
+        projInstance.Initiate(dir.normalized, shootingSpeed, this, distance);
     }
 
 }

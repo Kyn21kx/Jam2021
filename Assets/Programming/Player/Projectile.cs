@@ -9,20 +9,23 @@ public class Projectile : MonoBehaviour {
     public float travelSpeed;
     private float cntr = 0f;
     private Shooting shootingRef;
+    private float travelDistance;
     #endregion
 
-    public void Initiate(Vector2 dir, float travelSpeed, Shooting shootingRef) {
+    public void Initiate(Vector2 dir, float travelSpeed, Shooting shootingRef, float travelDistance) {
         transform.parent = null;
         this.dir = dir;
         this.travelSpeed = travelSpeed;
         this.shootingRef = shootingRef;
+        this.travelDistance = travelDistance;
     }
 
     //Destroy after a period of time
     private void Update() {
         cntr += Time.deltaTime;
-        transform.Translate(dir * travelSpeed * Time.deltaTime);
-        if (cntr >= 5f || Detect())
+        float realSpeed = travelSpeed * Time.deltaTime;
+        transform.Translate(dir * realSpeed);
+        if (cntr >= travelDistance / realSpeed || Detect())
             Destroy(gameObject);
     }
 
