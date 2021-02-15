@@ -11,11 +11,13 @@ public class Movement : MonoBehaviour {
     private Vector2 movVector;
     [SerializeField]
     private float speed;
+    private bool idle;
     #endregion
 
     private void Start() {
         rig = GetComponent<Rigidbody2D>();
         movVector = Vector2.zero;
+        idle = true;
     }
 
     private void Update() {
@@ -31,7 +33,13 @@ public class Movement : MonoBehaviour {
     }
 
     private void Move() {
-        Vector2 nextPos = (Vector2)transform.position + movVector;
-        rig.position = Vector2.Lerp(transform.position, nextPos, Time.fixedDeltaTime * speed);
+        if (movVector == Vector2.zero)
+            idle = true;
+        else if (idle && movVector != Vector2.zero) {
+            rig.velocity *= 0f;
+            idle = false;
+        }
+        Vector2 nextPos = rig.position + movVector;
+        rig.position = Vector2.Lerp(rig.position, nextPos, Time.fixedDeltaTime * speed);
     }
 }

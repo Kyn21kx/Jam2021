@@ -13,9 +13,10 @@ GameObject:
   - component: {fileID: 120075177845311838}
   - component: {fileID: 120075177845311837}
   - component: {fileID: 120075177845311836}
+  - component: {fileID: 311419178}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -132,5 +133,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0280264700ab3049a1891e1ee185c47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectile: {fileID: 4134605716431631250, guid: 24149a6dfd16a774f944622e90fc5918, type: 3}
-  shootingSpeed: 10
+  projectile: {fileID: 2870693454530301450, guid: 3e9ce8fd7653a864a82e3cd1b9a64324, type: 3}
+  shootingSpeed: 30
+  personBuffer: {fileID: 0}
+--- !u!58 &311419178
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 120075177845311833}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.1

@@ -21,7 +21,7 @@ public class AI : MonoBehaviour {
     }
 
     private void Update() {
-        
+        movRef.Move(playerShootingRef.transform.position);
     }
 
     public void BeginMatch() {
