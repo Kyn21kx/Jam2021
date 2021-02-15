@@ -15,6 +15,7 @@ public class Matching : MonoBehaviour {
     [SerializeField]
     private Gender genderId;
 
+    public float matchingTime;
     [SerializeField]
     private uint men;
     [SerializeField]
@@ -23,7 +24,12 @@ public class Matching : MonoBehaviour {
     private uint nonBi;
 
     public Gender GenderId { get { return genderId; } }
+    public bool Paired { get; private set; }
     #endregion
+
+    private void Start() {
+        Paired = false;
+    }
 
     public bool Match (Matching other) {
         //The only thing that we need to check is if the gender identity is included
@@ -63,6 +69,9 @@ public class Matching : MonoBehaviour {
     /// </summary>
     public void Pair(Matching other) {
         ReduceByMatch(other);
+        //Check that every single category is 0 before we pair
+        Debug.Log("Paired!");
+        Paired = men <= 0 && women <= 0 && nonBi <= 0;
     }
 
     private void ReduceByMatch(Matching other) {

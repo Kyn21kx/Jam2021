@@ -10,8 +10,7 @@ public class Shooting : MonoBehaviour {
     [SerializeField]
     private float shootingSpeed;
     private Camera cam;
-    [SerializeField]
-    private AI personBuffer;
+    public AI personBuffer;
     #endregion
 
     private void Start() {
@@ -20,8 +19,29 @@ public class Shooting : MonoBehaviour {
     }
 
     private void Update() {
+        //TODO: Add cooldown
         if (Input.GetMouseButtonDown(0))
             Shoot();
+    }
+
+    public void BufferPerson(AI personRef) {
+        personRef.BeginMatch();
+        if (personBuffer == null) {
+            //Stun the person for a couple of seconds
+            personBuffer = personRef;
+            //Send the information to the UI
+        }
+        else {
+            //Pair them
+            if (personBuffer.OpenForMatch && personRef.OpenForMatch) {
+                var match1 = personRef.MatchRef;
+                var match2 = personBuffer.MatchRef;
+                
+                if (match1.Match(match2))
+                    match1.Pair(match2);
+            
+            }
+        }
     }
 
     private void Shoot() {
@@ -30,7 +50,7 @@ public class Shooting : MonoBehaviour {
         Vector2 dir = mousePos - (Vector2)transform.position;
         var instance = Instantiate(projectile, transform.position, Quaternion.identity);
         Projectile projInstance = instance.GetComponent<Projectile>();
-        projInstance.Initiate(dir.normalized, shootingSpeed);
+        projInstance.Initiate(dir.normalized, shootingSpeed, this);
     }
 
 }
