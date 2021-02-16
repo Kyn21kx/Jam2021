@@ -19,6 +19,11 @@ public class HealthManager : MonoBehaviour {
     private void Update() {
         if (Invincible) {
             //Timer down and set it to false
+            invTime -= Time.deltaTime;
+            if (invTime <= 0f) {
+                Invincible = false;
+                invTime = auxInvTime;
+            }
         }
     }
 
@@ -26,6 +31,7 @@ public class HealthManager : MonoBehaviour {
         if (!Invincible) {
             health--;
             DmgIndicatorIn();
+            Invincible = true;
         }
     }
 
