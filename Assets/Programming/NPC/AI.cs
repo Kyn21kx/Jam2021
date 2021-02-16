@@ -12,6 +12,7 @@ public class AI : MonoBehaviour {
     }
 
     #region Variables
+    public bool lover;
     private Transform playerRef;
     public NPMovement movRef;
     private Vector2 nodePosition;
@@ -27,6 +28,7 @@ public class AI : MonoBehaviour {
 
 
     private void Start() {
+        SetNewLHValues();
         MatchRef = GetComponent<Matching>();
         movRef = GetComponent<NPMovement>();
         nodePosition = movRef.TargetPosHolder.position;
@@ -68,6 +70,31 @@ public class AI : MonoBehaviour {
             nodePosition = Utilities.GetRandomVector(0f, 1f) * magnitude;
         }
         movRef.Move(nodePosition);
+    }
+
+    /// <summary>
+    /// Sets the agent's unique values based on his type (lover or hater)
+    /// </summary>
+    private void SetNewLHValues() {
+        if (lover) {
+            //Change this for an animation
+            GetComponent<SpriteRenderer>().color = Color.magenta;
+            //Set own layer
+            gameObject.layer = LayerMask.NameToLayer("Lovers");
+            //Set target layer
+            int t = 1 << 8;
+            targetMask = t;
+        }
+        else {
+            //Change this for an animation
+            GetComponent<SpriteRenderer>().color = Color.gray;
+            //Set own layer
+            gameObject.layer = LayerMask.NameToLayer("Haters");
+            //Set target layers
+            int playerLayer = 1 << 9;
+            int loverLayer = 1 << 10;
+            targetMask = playerLayer| loverLayer;
+        }
     }
 
     private Transform DetectLover() {
