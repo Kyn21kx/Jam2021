@@ -53,7 +53,7 @@ public class AI : MonoBehaviour {
 
     private IEnumerator Patrol() {
         //Check for lover
-        if (DetectLover()) {
+        if (DetectLover() != null) {
             currState = States.Chase;
             yield break;
         }
@@ -70,9 +70,9 @@ public class AI : MonoBehaviour {
         movRef.Move(nodePosition);
     }
 
-    private bool DetectLover() {
+    private Transform DetectLover() {
         //Circle cast
-        return Physics2D.CircleCast(transform.position, detectionRange, Vector2.zero, 0f, targetMask);
+        return Physics2D.CircleCast(transform.position, detectionRange, Vector2.zero, 0f, targetMask).transform;
     }
 
     private void OnDrawGizmos() {

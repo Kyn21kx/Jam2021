@@ -33,8 +33,7 @@ public class Shooting : MonoBehaviour {
         if (holding && Input.GetMouseButtonUp(0)) {
             //d = x^(1.5f) - (x/2)
             //Graphics to show it
-            float d = Mathf.Pow(holdTime, 1.5f) - (holdTime / 3f);
-            d = Mathf.Clamp(d, 0f, 6f);
+            float d = holdTime * 30f;
             Debug.LogWarning("Distance: " + d);
             holding = false;
             holdTime = 0f;
