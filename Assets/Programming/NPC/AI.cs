@@ -14,11 +14,14 @@ public class AI : MonoBehaviour {
     #region Variables
     public bool lover;
     private Transform playerRef;
+    private Transform currentTarget;
     public NPMovement movRef;
     private Vector2 nodePosition;
     public States currState;
     [SerializeField]
     private float detectionRange;
+    [SerializeField]
+    private float actionRange;
     [SerializeField]
     private LayerMask targetMask;
     public Matching MatchRef { get; private set; }
@@ -28,13 +31,14 @@ public class AI : MonoBehaviour {
 
 
     private void Start() {
-        SetNewLHValues();
         MatchRef = GetComponent<Matching>();
         movRef = GetComponent<NPMovement>();
         nodePosition = movRef.TargetPosHolder.position;
         var player = GameObject.FindGameObjectWithTag("Player");
         playerRef = player.transform;
         currState = States.Patrol;
+        currentTarget = null;
+        SetNewLHValues();
     }
 
     private void Update() {
@@ -44,7 +48,8 @@ public class AI : MonoBehaviour {
                 StartCoroutine(Patrol());
                 break;
             case States.Chase:
-                movRef.Stop();
+                if (!lover)
+                    Chase();
                 break;
             case States.Nutz:
                 break;
@@ -55,7 +60,8 @@ public class AI : MonoBehaviour {
 
     private IEnumerator Patrol() {
         //Check for lover
-        if (DetectLover() != null) {
+        currentTarget = Detect();
+        if (currentTarget != null) {
             currState = States.Chase;
             yield break;
         }
@@ -70,6 +76,31 @@ public class AI : MonoBehaviour {
             nodePosition = Utilities.GetRandomVector(0f, 1f) * magnitude;
         }
         movRef.Move(nodePosition);
+    }
+
+    private void Chase() {
+        Vector2 toTarget = currentTarget.position - transform.position;
+        float distanceSqr = toTarget.SqrMagnitude();
+        //If we detect the player instead of a lover, switch to them [IN REVIEW]
+        currentTarget = Detect() == playerRef ? playerRef : currentTarget;
+        if (distanceSqr <= actionRange * actionRange) {
+            
+            if (playerRef.Equals(currentTarget)) {
+                //Get the health component and fuck him up
+                playerRef.GetComponent<HealthManager>().Damage();
+                return;
+            }
+            //Attack
+            AI loverRef = currentTarget.GetComponent<AI>();
+            loverRef.ConvertToHater();
+            currentTarget = null;
+            currState = States.Patrol;
+        
+        }
+        else {
+            //Follow
+            movRef.Move(currentTarget.position);
+        }
     }
 
     /// <summary>
@@ -93,11 +124,21 @@ public class AI : MonoBehaviour {
             //Set target layers
             int playerLayer = 1 << 9;
             int loverLayer = 1 << 10;
-            targetMask = playerLayer| loverLayer;
+            targetMask = playerLayer | loverLayer;
         }
     }
 
-    private Transform DetectLover() {
+    public void ConvertToLover() {
+        lover = true;
+        SetNewLHValues();
+    }
+
+    public void ConvertToHater() {
+        lover = false;
+        SetNewLHValues();
+    }
+
+    private Transform Detect() {
         //Circle cast
         return Physics2D.CircleCast(transform.position, detectionRange, Vector2.zero, 0f, targetMask).transform;
     }
@@ -105,6 +146,8 @@ public class AI : MonoBehaviour {
     private void OnDrawGizmos() {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, detectionRange);
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, actionRange);
     }
 
     public void BeginMatch() {
