@@ -14,8 +14,9 @@ public class AI : MonoBehaviour {
     #region Variables
     public bool lover;
     private Transform playerRef;
-    private Transform currentTarget;
+    public Transform CurrentTarget { get; private set; }
     public NPMovement movRef;
+    [SerializeField]
     private Vector2 nodePosition;
     public States currState;
     [SerializeField]
@@ -24,6 +25,7 @@ public class AI : MonoBehaviour {
     private float actionRange;
     [SerializeField]
     private LayerMask targetMask;
+    private float conversionTimer;
     public Matching MatchRef { get; private set; }
     public bool OpenForMatch { get; private set; }
     #endregion
@@ -37,7 +39,7 @@ public class AI : MonoBehaviour {
         var player = GameObject.FindGameObjectWithTag("Player");
         playerRef = player.transform;
         currState = States.Patrol;
-        currentTarget = null;
+        CurrentTarget = null;
         SetNewLHValues();
     }
 
@@ -50,6 +52,8 @@ public class AI : MonoBehaviour {
             case States.Chase:
                 if (!lover)
                     Chase();
+                else
+                    RunAway();
                 break;
             case States.Nutz:
                 break;
@@ -60,8 +64,9 @@ public class AI : MonoBehaviour {
 
     private IEnumerator Patrol() {
         //Check for lover
-        currentTarget = Detect();
-        if (currentTarget != null) {
+        CurrentTarget = Detect();
+        if (CurrentTarget != null) {
+            nodePosition = transform.position;
             currState = States.Chase;
             yield break;
         }
@@ -71,7 +76,7 @@ public class AI : MonoBehaviour {
             yield return new WaitForSeconds(2f);
             movRef.ResumePath();
             //Create random magnitud as well
-            float magnitude = Random.Range(20f, 50f);
+            float magnitude = Random.Range(20f, 40f);
             //Random position from 0 to 1
             nodePosition = Utilities.GetRandomVector(0f, 1f) * magnitude;
         }
@@ -79,31 +84,46 @@ public class AI : MonoBehaviour {
     }
 
     private void RunAway() {
+        if (CurrentTarget.GetComponent<AI>().CurrentTarget != transform) {
+            currState = States.Patrol;
+            return;
+        }
+        if (movRef.HasArrived(nodePosition, 0.5f)) {
+            nodePosition = (transform.position - CurrentTarget.position).normalized;
+            nodePosition = (Vector2)transform.position + nodePosition;
+            float a = Random.Range(0f, 180f);
+            Utilities.OffsetVectorByAngle(ref nodePosition, a);
 
+        }
+        movRef.Move(nodePosition);
     }
 
     private void Chase() {
-        Vector2 toTarget = currentTarget.position - transform.position;
+        Vector2 toTarget = CurrentTarget.position - transform.position;
         float distanceSqr = toTarget.SqrMagnitude();
         //If we detect the player instead of a lover, switch to them [IN REVIEW]
-        currentTarget = Detect() == playerRef ? playerRef : currentTarget;
+        Transform tmp = Detect();
+        CurrentTarget = tmp  == null ? CurrentTarget : tmp;
         if (distanceSqr <= actionRange * actionRange) {
-            
-            if (playerRef.Equals(currentTarget)) {
+            if (playerRef.Equals(CurrentTarget)) {
                 //Get the health component and fuck him up
                 playerRef.GetComponent<HealthManager>().Damage();
                 return;
             }
-            //Attack
-            AI loverRef = currentTarget.GetComponent<AI>();
-            loverRef.ConvertToHater();
-            currentTarget = null;
-            currState = States.Patrol;
-        
+            conversionTimer += Time.deltaTime;
+            if (conversionTimer >= 1f) {
+                //Attack
+                AI loverRef = CurrentTarget.GetComponent<AI>();
+                loverRef.ConvertToHater();
+                CurrentTarget = null;
+                conversionTimer = 0f;
+                currState = States.Patrol;
+            }
         }
         else {
+            conversionTimer = 0f;
             //Follow
-            movRef.Move(currentTarget.position);
+            movRef.Move(CurrentTarget.position);
         }
     }
 
@@ -135,14 +155,14 @@ public class AI : MonoBehaviour {
     public void ConvertToLover() {
         lover = true;
         SetNewLHValues();
-        currentTarget = null;
+        CurrentTarget = null;
         currState = States.Loving;
     }
 
     public void ConvertToHater() {
         lover = false;
         SetNewLHValues();
-        currentTarget = null;
+        CurrentTarget = null;
         currState = States.Patrol;
     }
 
