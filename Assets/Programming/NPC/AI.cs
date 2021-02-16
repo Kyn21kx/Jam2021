@@ -78,6 +78,10 @@ public class AI : MonoBehaviour {
         movRef.Move(nodePosition);
     }
 
+    private void RunAway() {
+
+    }
+
     private void Chase() {
         Vector2 toTarget = currentTarget.position - transform.position;
         float distanceSqr = toTarget.SqrMagnitude();
@@ -131,11 +135,15 @@ public class AI : MonoBehaviour {
     public void ConvertToLover() {
         lover = true;
         SetNewLHValues();
+        currentTarget = null;
+        currState = States.Loving;
     }
 
     public void ConvertToHater() {
         lover = false;
         SetNewLHValues();
+        currentTarget = null;
+        currState = States.Patrol;
     }
 
     private Transform Detect() {
