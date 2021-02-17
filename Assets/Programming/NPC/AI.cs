@@ -7,6 +7,7 @@ public class AI : MonoBehaviour {
     public enum States {
         Patrol,
         Chase,
+        PostAttck,
         Nutz,
         Loving
     }
@@ -28,6 +29,7 @@ public class AI : MonoBehaviour {
     private float conversionTimer;
     public Matching MatchRef { get; private set; }
     public bool OpenForMatch { get; private set; }
+    public bool CanAttack { get; private set; }
     #endregion
 
 
@@ -40,6 +42,7 @@ public class AI : MonoBehaviour {
         playerRef = player.transform;
         currState = States.Patrol;
         CurrentTarget = null;
+        CanAttack = true;
         SetNewLHValues();
     }
 
@@ -58,6 +61,19 @@ public class AI : MonoBehaviour {
             case States.Nutz:
                 break;
             case States.Loving:
+                break;
+            case States.PostAttck:
+                CanAttack = false;
+                //Move on the opposite direction of the player, then go back to chasing
+                Vector2 dir = transform.position - playerRef.position;
+                float sqrDis = dir.sqrMagnitude;
+                dir = (Vector2)transform.position + dir.normalized;
+                if (sqrDis <= (actionRange + actionRange / 2f) * (actionRange + actionRange / 2f))
+                    movRef.Move(dir);
+                else {
+                    CanAttack = true;
+                    currState = States.Chase;
+                }
                 break;
         }
     }
@@ -104,10 +120,11 @@ public class AI : MonoBehaviour {
         CurrentTarget = tmp  != null && tmp.position.sqrMagnitude < CurrentTarget.position.sqrMagnitude ? tmp : CurrentTarget;
         Vector2 toTarget = CurrentTarget.position - transform.position;
         float distanceSqr = toTarget.SqrMagnitude();
-        if (distanceSqr <= actionRange * actionRange && movRef.canMove) {
+        if (distanceSqr <= actionRange * actionRange && CanAttack) {
             if (playerRef.Equals(CurrentTarget)) {
                 //Get the health component and fuck him up
                 playerRef.GetComponent<HealthManager>().Damage();
+                currState = States.PostAttck;
                 return;
             }
             AI loverRef = CurrentTarget.GetComponent<AI>();
@@ -188,6 +205,7 @@ public class AI : MonoBehaviour {
 
     public void Stun(float time) {
         movRef.Stop();
+        CanAttack = false;
         movRef.canMove = false;
         StartCoroutine(RecoverStun(time));
     }
@@ -195,6 +213,7 @@ public class AI : MonoBehaviour {
     private IEnumerator RecoverStun(float time) {
         yield return new WaitForSeconds(time);
         movRef.canMove = true;
+        CanAttack = true;
         movRef.ResumePath();
     }
 
