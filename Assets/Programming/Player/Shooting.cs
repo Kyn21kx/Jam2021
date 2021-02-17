@@ -50,7 +50,7 @@ public class Shooting : MonoBehaviour {
         if (holding && Input.GetMouseButtonUp(0)) {
             //d = x^(1.5f) - (x/2)
             //Graphics to show it
-            float d = (holdTime * 5f) + 10;
+            float d = (holdTime * (35f / 1.5f)) + 10;
             Debug.LogWarning("Distance: " + d);
             holding = false;
             holdTime = 0f;

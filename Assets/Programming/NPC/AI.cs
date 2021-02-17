@@ -26,10 +26,14 @@ public class AI : MonoBehaviour {
     private float actionRange;
     [SerializeField]
     private LayerMask targetMask;
+    [SerializeField]
     private float conversionTimer;
+    [SerializeField]
+    private float auxStunTime;
     public Matching MatchRef { get; private set; }
     public bool OpenForMatch { get; private set; }
     public bool CanAttack { get; private set; }
+    public bool Stunned { get; private set; }
     #endregion
 
 
@@ -47,6 +51,7 @@ public class AI : MonoBehaviour {
     }
 
     private void Update() {
+        StunManager();
         //FSM
         switch (currState) {
             case States.Patrol:
@@ -75,6 +80,16 @@ public class AI : MonoBehaviour {
                     currState = States.Chase;
                 }
                 break;
+        }
+    }
+
+    private void StunManager() {
+        if (Stunned) {
+            auxStunTime -= Time.deltaTime;
+            if (auxStunTime <= 0f) {
+                Stunned = false;
+                RecoverStun();
+            }
         }
     }
 
@@ -207,13 +222,14 @@ public class AI : MonoBehaviour {
         movRef.Stop();
         CanAttack = false;
         movRef.canMove = false;
-        StartCoroutine(RecoverStun(time));
+        auxStunTime = time;
+        Stunned = true;
     }
 
-    private IEnumerator RecoverStun(float time) {
-        yield return new WaitForSeconds(time);
+    private void RecoverStun() {
         movRef.canMove = true;
         CanAttack = true;
+        Stunned = false;
         movRef.ResumePath();
     }
 
