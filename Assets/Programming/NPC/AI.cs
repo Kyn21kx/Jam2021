@@ -97,32 +97,34 @@ public class AI : MonoBehaviour {
         }
         movRef.Move(nodePosition);
     }
-
     private void Chase() {
-        Vector2 toTarget = CurrentTarget.position - transform.position;
-        float distanceSqr = toTarget.SqrMagnitude();
+        //Maybe refactor this a bit
         //If we detect the player instead of a lover, switch to them [IN REVIEW]
         Transform tmp = Detect();
         CurrentTarget = tmp  == null ? CurrentTarget : tmp;
+        Vector2 toTarget = CurrentTarget.position - transform.position;
+        float distanceSqr = toTarget.SqrMagnitude();
         if (distanceSqr <= actionRange * actionRange) {
             if (playerRef.Equals(CurrentTarget)) {
                 //Get the health component and fuck him up
                 playerRef.GetComponent<HealthManager>().Damage();
                 return;
             }
-            conversionTimer += Time.deltaTime;
-            if (conversionTimer >= 1f) {
+            AI loverRef = CurrentTarget.GetComponent<AI>();
+            loverRef.conversionTimer += Time.deltaTime;
+            if (loverRef.conversionTimer >= 1f) {
                 //Attack
-                AI loverRef = CurrentTarget.GetComponent<AI>();
                 loverRef.ConvertToHater();
+                loverRef.conversionTimer = 0f;
                 CurrentTarget = null;
-                conversionTimer = 0f;
                 currState = States.Patrol;
             }
         }
         else {
-            conversionTimer = 0f;
-            //Follow
+            if (!playerRef.Equals(CurrentTarget)) {
+                AI loverRef = CurrentTarget.GetComponent<AI>();
+                loverRef.conversionTimer = 0f;
+            }
             movRef.Move(CurrentTarget.position);
         }
     }
