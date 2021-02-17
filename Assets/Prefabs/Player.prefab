@@ -14,7 +14,8 @@ GameObject:
   - component: {fileID: 120075177845311837}
   - component: {fileID: 120075177845311836}
   - component: {fileID: 311419178}
-  m_Layer: 0
+  - component: {fileID: 1969623728}
+  m_Layer: 9
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -72,11 +73,11 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 720650657
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -99,14 +100,14 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0
+  m_LinearDrag: 10
   m_AngularDrag: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 1
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!114 &120075177845311837
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -120,7 +121,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movVector: {x: 0, y: 0}
-  speed: 20
+  speed: 12.5
 --- !u!114 &120075177845311836
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -134,8 +135,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   projectile: {fileID: 2870693454530301450, guid: 3e9ce8fd7653a864a82e3cd1b9a64324, type: 3}
-  shootingSpeed: 30
+  shootingSpeed: 50
   personBuffer: {fileID: 0}
+  cooldown: 0.5
 --- !u!58 &311419178
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -152,3 +154,17 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.1
+--- !u!114 &1969623728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 120075177845311833}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0dbdd4fe9c499c4fad42b63ef6550b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: 5
+  invTime: 1
