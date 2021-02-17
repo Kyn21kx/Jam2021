@@ -3,6 +3,7 @@
 public class HealthManager : MonoBehaviour {
 
     #region Variables
+    [SerializeField]
     private byte health;
     public byte Health { get { return health; } }
     public bool Invincible { get; private set; }
@@ -25,6 +26,13 @@ public class HealthManager : MonoBehaviour {
                 invTime = auxInvTime;
             }
         }
+        if (health <= 0)
+            Die();
+    }
+
+    private void Die() {
+        Time.timeScale = 0.5f;
+        Destroy(gameObject);
     }
 
     public void Damage() {

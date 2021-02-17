@@ -27,11 +27,19 @@ public class Projectile : MonoBehaviour {
 
     //Destroy after a period of time
     private void FixedUpdate() {
+        float mTime = travelDistance / travelSpeed;
         cntr += Time.fixedDeltaTime;
-        rig.position = Vector2.Lerp(rig.position, rig.position + dir, Time.fixedDeltaTime * travelSpeed);
         //transform.Translate(dir * realSpeed);
-        if (cntr >= travelDistance / travelSpeed || Detect())
+        if (Detect())
             Destroy(gameObject);
+        if (cntr < mTime) {
+            rig.position = Vector2.Lerp(rig.position, rig.position + dir, Time.fixedDeltaTime * travelSpeed);
+        }
+        else {
+            rig.velocity = Vector2.zero;
+            if (cntr >= mTime + (1f))
+                Destroy(gameObject);
+        }
     }
 
     private bool Detect() {

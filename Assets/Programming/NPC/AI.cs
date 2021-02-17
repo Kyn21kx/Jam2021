@@ -101,10 +101,10 @@ public class AI : MonoBehaviour {
         //Maybe refactor this a bit
         //If we detect the player instead of a lover, switch to them [IN REVIEW]
         Transform tmp = Detect();
-        CurrentTarget = tmp  == null ? CurrentTarget : tmp;
+        CurrentTarget = tmp  != null && tmp.position.sqrMagnitude < CurrentTarget.position.sqrMagnitude ? tmp : CurrentTarget;
         Vector2 toTarget = CurrentTarget.position - transform.position;
         float distanceSqr = toTarget.SqrMagnitude();
-        if (distanceSqr <= actionRange * actionRange) {
+        if (distanceSqr <= actionRange * actionRange && movRef.canMove) {
             if (playerRef.Equals(CurrentTarget)) {
                 //Get the health component and fuck him up
                 playerRef.GetComponent<HealthManager>().Damage();

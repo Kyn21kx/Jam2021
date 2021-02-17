@@ -13,6 +13,10 @@ public class Shooting : MonoBehaviour {
     public AI personBuffer;
     private float holdTime;
     private bool holding;
+    [SerializeField]
+    private float cooldown;
+    private float auxCooldown;
+    private bool onCooldown;
     #endregion
 
     private void Start() {
@@ -20,11 +24,24 @@ public class Shooting : MonoBehaviour {
         personBuffer = null;
         holdTime = 0f;
         holding = false;
+        auxCooldown = cooldown;
+        onCooldown = false;
     }
 
     private void Update() {
         //TODO: Add cooldown
         HoldShoot();
+        Cooldown();
+    }
+
+    private void Cooldown() {
+        if (onCooldown) {
+            cooldown -= Time.deltaTime;
+            if (cooldown <= 0f) {
+                cooldown = auxCooldown;
+                onCooldown = false;
+            }
+        }
     }
 
     private void HoldShoot() {
@@ -33,7 +50,7 @@ public class Shooting : MonoBehaviour {
         if (holding && Input.GetMouseButtonUp(0)) {
             //d = x^(1.5f) - (x/2)
             //Graphics to show it
-            float d = holdTime * 30f;
+            float d = (holdTime * 5f) + 10;
             Debug.LogWarning("Distance: " + d);
             holding = false;
             holdTime = 0f;
@@ -45,6 +62,8 @@ public class Shooting : MonoBehaviour {
     }
 
     public void BufferPerson(AI personRef) {
+        if (personBuffer == personRef)
+            personRef.StopAllCoroutines();
         personRef.BeginMatch();
         if (personBuffer == null) {
             //Stun the person for a couple of seconds
@@ -79,13 +98,16 @@ public class Shooting : MonoBehaviour {
     }
 
     private void Shoot(float distance) {
-        //Instantiate the prefab to the mouse's position
-        Vector2 mousePos = cam.ScreenToWorldPoint(Input.mousePosition);
-        Vector2 dir = mousePos - (Vector2)transform.position;
-        var instance = Instantiate(projectile, transform.position, Quaternion.identity);
-        Projectile projInstance = instance.GetComponent<Projectile>();
-        //t = v / d
-        projInstance.Initiate(dir.normalized, shootingSpeed, this, distance);
+        if (!onCooldown) {
+            //Instantiate the prefab to the mouse's position
+            Vector2 mousePos = cam.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 dir = mousePos - (Vector2)transform.position;
+            var instance = Instantiate(projectile, transform.position, Quaternion.identity);
+            Projectile projInstance = instance.GetComponent<Projectile>();
+            //t = v / d
+            projInstance.Initiate(dir.normalized, shootingSpeed, this, distance);
+            onCooldown = true;
+        }
     }
 
 }
