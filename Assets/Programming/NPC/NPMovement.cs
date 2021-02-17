@@ -20,7 +20,7 @@ public class NPMovement : MonoBehaviour {
     [Tooltip("This needs to be the exact same as the pathfinder's layermask")]
     public LayerMask obstacleLayer;
     public bool canMove;
-    private Vector2 debugDir = Vector2.zero;
+    private Vector2 debugDir;
 
     public Transform TargetPosHolder { get { return agent.target; } }
     #endregion
@@ -35,31 +35,13 @@ public class NPMovement : MonoBehaviour {
     }
 
     public void Move(Vector2 position) {
-        if (canMove) {
-            //Check if there are obstacles in our way
-            Vector2 dir = position - (Vector2)transform.position;
-            debugDir = (Vector2)transform.position + dir.normalized;
-            RaycastHit2D hit = Physics2D.CircleCast(transform.position, 4f, dir.normalized, 2f, obstacleLayer);
-            if (hit.transform == null) {
-                //Normal direct vector movement
-                path.enabled = false;
-                agent.enabled = false;
-                seeker.enabled = false;
-                rig.position = Vector2.Lerp(rig.position, position, Time.deltaTime * speed);
-            }
-            else {
-                //Pathfinding movement
-                path.enabled = true;
-                agent.enabled = true;
-                seeker.enabled = true;
-                TargetPosHolder.position = position;
-            }
-        }
+        if (canMove)
+            TargetPosHolder.position = position;
     }
 
     private void OnDrawGizmos() {
         Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere((Vector2)transform.position + (debugDir * 2f), 4f);
+        Gizmos.DrawWireSphere(debugDir, 4f);
     }
 
     public bool HasArrived(Vector2 position, float threshold) {

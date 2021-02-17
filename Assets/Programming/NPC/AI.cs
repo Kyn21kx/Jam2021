@@ -72,7 +72,7 @@ public class AI : MonoBehaviour {
                 //Move on the opposite direction of the player, then go back to chasing
                 Vector2 dir = transform.position - playerRef.position;
                 float sqrDis = dir.sqrMagnitude;
-                dir = (Vector2)transform.position + dir.normalized;
+                dir = (Vector2)transform.position + dir.normalized * 10f;
                 if (sqrDis <= (actionRange + actionRange / 2f) * (actionRange + actionRange / 2f))
                     movRef.Move(dir);
                 else {
@@ -104,12 +104,13 @@ public class AI : MonoBehaviour {
         //Create a new vector everytime
         if (movRef.HasArrived(nodePosition, 0.5f)) {
             movRef.Stop();
+            //Create random magnitude as well
+            float magnitude = Random.Range(20f, 40f);
+            Vector2 nPos = Utilities.GetRandomVector(0f, 1f) * magnitude;
+            //Random position from 0 to 1
+            nodePosition = nPos;
             yield return new WaitForSeconds(2f);
             movRef.ResumePath();
-            //Create random magnitud as well
-            float magnitude = Random.Range(20f, 40f);
-            //Random position from 0 to 1
-            nodePosition = Utilities.GetRandomVector(0f, 1f) * magnitude;
         }
         movRef.Move(nodePosition);
     }
