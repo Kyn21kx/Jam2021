@@ -42,7 +42,18 @@ public class Matching : MonoBehaviour {
         auxMen = men;
         auxWomen = women;
         auxNonBi = nonBi;
+
+        UpdateSymbols();
         Paired = false;
+    }
+
+    private void UpdateSymbols() {
+        Sprite male, female, nBinary;
+        
+    }
+
+    private void SpawnSymbol(Sprite sprite, float offsetX) {
+
     }
 
     public bool Match (Matching other) {
