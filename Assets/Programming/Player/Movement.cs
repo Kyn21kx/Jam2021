@@ -12,10 +12,12 @@ public class Movement : MonoBehaviour {
     [SerializeField]
     private float speed;
     private bool idle;
+    private SpriteRenderer spriteRenderer;
     #endregion
 
     private void Start() {
         rig = GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
         movVector = Vector2.zero;
         idle = true;
     }
@@ -30,6 +32,10 @@ public class Movement : MonoBehaviour {
 
     private void ReadInput() {
         movVector = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        if (movVector.x > 0f)
+            spriteRenderer.flipX = true;
+        else if (movVector.x < 0f)
+            spriteRenderer.flipX = false;
     }
 
     private void Move() {
