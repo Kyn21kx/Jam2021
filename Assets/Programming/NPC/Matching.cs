@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEditor;
 
 [RequireComponent(typeof(AI))]
 public class Matching : MonoBehaviour {
@@ -31,29 +32,51 @@ public class Matching : MonoBehaviour {
     private AI selfAI;
     [SerializeField]
     private GameObject symbolCountPref;
-
+    [SerializeField]
+    private GameObject[] symbols;
+    [SerializeField]
+    private Sprite male, female, nBinary;
     public Gender GenderId { get { return genderId; } }
     public bool Paired { get; private set; }
     #endregion
 
     private void Start() {
         selfAI = GetComponent<AI>();
-
         auxMen = men;
         auxWomen = women;
         auxNonBi = nonBi;
+        symbols = new GameObject[3];
 
-        UpdateSymbols();
+        UpdateSymbols(start: true);
+
         Paired = false;
     }
 
-    private void UpdateSymbols() {
-        Sprite male, female, nBinary;
-        
+    private void Update() {
+        UpdateSymbols();
     }
 
-    private void SpawnSymbol(Sprite sprite, float offsetX) {
+    private void UpdateSymbols(bool start = false) {
+        float offsetX = -0.2f;
+        int[] preferences = { men, women, nonBi };
+        Sprite[] sprites = { male, female, nBinary };
+        for (int i = 0; i < 3; i++) {
+            if (preferences[i] > 0) {
+                symbols[i] = symbols[i] == null ? Instantiate(symbolCountPref, transform) : symbols[i];
+                symbols[i].transform.localPosition = new Vector2(offsetX, symbols[i].transform.localPosition.y);
+                offsetX += 0.2f;
+            }
+            SpawnSymbol(symbols[i], sprites[i], preferences[i], start);
+        }
+    }
 
+    private void SpawnSymbol(GameObject obj, Sprite sprite, int amnt, bool start) {
+        if (start) {
+            SpriteRenderer renderer = obj.GetComponent<SpriteRenderer>();
+            renderer.sprite = sprite;
+        }
+        TextMeshPro txt = obj.GetComponentInChildren<TextMeshPro>();
+        txt.SetText("x" + amnt);
     }
 
     public bool Match (Matching other) {
