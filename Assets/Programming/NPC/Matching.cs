@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 [RequireComponent(typeof(AI))]
 public class Matching : MonoBehaviour {
@@ -28,17 +29,20 @@ public class Matching : MonoBehaviour {
     private int auxNonBi;
 
     private AI selfAI;
+    [SerializeField]
+    private GameObject symbolCountPref;
 
     public Gender GenderId { get { return genderId; } }
     public bool Paired { get; private set; }
     #endregion
 
     private void Start() {
+        selfAI = GetComponent<AI>();
+
         auxMen = men;
         auxWomen = women;
         auxNonBi = nonBi;
         Paired = false;
-        selfAI = GetComponent<AI>();
     }
 
     public bool Match (Matching other) {

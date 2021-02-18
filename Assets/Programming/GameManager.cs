@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour {
     #endregion
 
     private void Start() {
+        Utilities.playerRef = GameObject.FindGameObjectWithTag("Player").transform;
         pathSettings = GetComponent<AstarPath>();
         //Make sure this always works
         PathGrid = (GridGraph)pathSettings.graphs[0];

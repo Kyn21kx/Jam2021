@@ -10,6 +10,7 @@ public class Projectile : MonoBehaviour {
     public float travelSpeed;
     private float cntr = 0f;
     private Shooting shootingRef;
+    private AI firingAI;
     private float travelDistance;
     private Rigidbody2D rig;
     #endregion
@@ -19,6 +20,17 @@ public class Projectile : MonoBehaviour {
         this.dir = dir;
         this.travelSpeed = travelSpeed;
         this.shootingRef = shootingRef;
+        this.travelDistance = travelDistance;
+        rig = GetComponent<Rigidbody2D>();
+        float rotation = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(0f, 0f, rotation - 90f);
+    }
+
+    public void Initiate(Vector2 dir, float travelSpeed, AI firingAI, float travelDistance) {
+        transform.parent = null;
+        this.dir = dir;
+        this.travelSpeed = travelSpeed;
+        this.firingAI = firingAI;
         this.travelDistance = travelDistance;
         rig = GetComponent<Rigidbody2D>();
         float rotation = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
@@ -43,13 +55,28 @@ public class Projectile : MonoBehaviour {
     }
 
     private bool Detect() {
-        RaycastHit2D hit = Physics2D.Raycast(rig.position, transform.forward, 1f, LayerMask.GetMask("Haters"));
+        LayerMask targetMask;
+        if (shootingRef == null) {
+            int playerMask = 1 << 9;
+            int loverLayer = 1 << 10;
+            targetMask = playerMask | loverLayer;
+        }
+        else {
+            int hatersMask = 1 << 8;
+            targetMask = hatersMask;
+        }
+        RaycastHit2D hit = Physics2D.Raycast(rig.position, transform.forward, 1f, targetMask);
         if (hit.transform != null) {
+            if (shootingRef == null) {
+                Utilities.playerRef.GetComponent<HealthManager>().Damage();
+                return true;
+            }
             //Send the player a reference to the hater object
             AI aiRef = hit.transform.GetComponent<AI>();
             shootingRef.BufferPerson(aiRef);
             //Stun the hater (soon to be lover) for a bit
             return true;
+
         }
         return false;
     }

@@ -2,6 +2,8 @@
 
 public abstract class Utilities {
 
+    public static Transform playerRef;
+
     public static Vector2 GetRandomVector(float xMin, float xMax, float yMin, float yMax) {
         float x = Random.Range(xMin, xMax);
         float y = Random.Range(yMin, yMax);
