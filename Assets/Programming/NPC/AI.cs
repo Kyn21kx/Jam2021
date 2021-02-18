@@ -225,8 +225,9 @@ public class AI : MonoBehaviour {
     }
 
     public void BeginMatch() {
-        OpenForMatch = true;
+        StopAllCoroutines();
         Stun(MatchRef.matchingTime);
+        OpenForMatch = true;
         StartCoroutine(CloseMatch());
     }
 

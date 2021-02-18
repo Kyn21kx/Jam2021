@@ -96,6 +96,7 @@ public class Matching : MonoBehaviour {
         men = auxMen;
         women = auxWomen;
         nonBi = auxNonBi;
+        Paired = false;
     }
 
     private void ReduceByMatch(Matching other) {

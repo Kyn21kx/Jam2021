@@ -63,8 +63,6 @@ public class Shooting : MonoBehaviour {
     }
 
     public void BufferPerson(AI personRef) {
-        if (personBuffer == personRef)
-            personRef.StopAllCoroutines();
         personRef.BeginMatch();
         if (personBuffer == null) {
             //Stun the person for a couple of seconds
