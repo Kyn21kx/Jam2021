@@ -73,7 +73,7 @@ public class AI : MonoBehaviour {
                 Vector2 dir = transform.position - playerRef.position;
                 float sqrDis = dir.sqrMagnitude;
                 dir = (Vector2)transform.position + dir.normalized * 10f;
-                if (sqrDis <= (actionRange + actionRange / 2f) * (actionRange + actionRange / 2f))
+                if (sqrDis <= (actionRange * 3f) * (actionRange * 3f))
                     movRef.Move(dir);
                 else {
                     CanAttack = true;
@@ -134,9 +134,13 @@ public class AI : MonoBehaviour {
         //If we detect the player instead of a lover, switch to them [IN REVIEW]
         Transform tmp = Detect();
         CurrentTarget = tmp  != null && tmp.position.sqrMagnitude < CurrentTarget.position.sqrMagnitude ? tmp : CurrentTarget;
-        Vector2 toTarget = CurrentTarget.position - transform.position;
-        float distanceSqr = toTarget.SqrMagnitude();
-        if (distanceSqr <= actionRange * actionRange && CanAttack) {
+        
+        Vector2 origin = CurrentTarget.position - transform.position;
+        origin = (Vector2)transform.position + (origin.normalized * 2f);
+
+        RaycastHit2D hit = Physics2D.CircleCast(origin, actionRange, Vector2.zero, 0f, targetMask);
+
+        if (hit.transform != null && CanAttack) {
             if (playerRef.Equals(CurrentTarget)) {
                 //Get the health component and fuck him up
                 playerRef.GetComponent<HealthManager>().Damage();
@@ -209,8 +213,12 @@ public class AI : MonoBehaviour {
     private void OnDrawGizmos() {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, detectionRange);
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, actionRange);
+        Gizmos.color = Color.yellow;
+        if (CurrentTarget != null) {
+            Vector2 origin = CurrentTarget.position - transform.position;
+            origin = (Vector2)transform.position + (origin.normalized * actionRange);
+            Gizmos.DrawWireSphere(origin, 2f);
+        }
     }
 
     public void BeginMatch() {

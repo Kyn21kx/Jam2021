@@ -16,11 +16,9 @@ public class NPMovement : MonoBehaviour {
     private Rigidbody2D rig;
     private AIPath path;
     private AIDestinationSetter agent;
-    private Seeker seeker;
     [Tooltip("This needs to be the exact same as the pathfinder's layermask")]
     public LayerMask obstacleLayer;
     public bool canMove;
-    private Vector2 debugDir;
 
     public Transform TargetPosHolder { get { return agent.target; } }
     #endregion
@@ -37,11 +35,6 @@ public class NPMovement : MonoBehaviour {
     public void Move(Vector2 position) {
         if (canMove)
             TargetPosHolder.position = position;
-    }
-
-    private void OnDrawGizmos() {
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(debugDir, 4f);
     }
 
     public bool HasArrived(Vector2 position, float threshold) {

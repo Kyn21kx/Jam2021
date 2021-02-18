@@ -253,7 +253,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 311419178, guid: 020146aecc9ab8740b8bc5f185adefd4, type: 3}
       propertyPath: m_Radius
-      value: 0.5
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1969623728, guid: 020146aecc9ab8740b8bc5f185adefd4, type: 3}
+      propertyPath: health
+      value: 255
       objectReference: {fileID: 0}
     - target: {fileID: 120075177845311833, guid: 020146aecc9ab8740b8bc5f185adefd4, type: 3}
       propertyPath: m_Name
@@ -562,6 +566,10 @@ PrefabInstance:
     - target: {fileID: 6248478452662877799, guid: 3e6e698270fd60346ba8ea78f8eae8ef, type: 3}
       propertyPath: m_Name
       value: NPC Test 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6248478452662877806, guid: 3e6e698270fd60346ba8ea78f8eae8ef, type: 3}
+      propertyPath: actionRange
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6248478452662877807, guid: 3e6e698270fd60346ba8ea78f8eae8ef, type: 3}
       propertyPath: m_Constraints
