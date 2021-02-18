@@ -90,10 +90,8 @@ public class AI : MonoBehaviour {
     private void StunManager() {
         if (Stunned) {
             auxStunTime -= Time.deltaTime;
-            if (auxStunTime <= 0f) {
-                Stunned = false;
+            if (auxStunTime <= 0f)
                 RecoverStun();
-            }
         }
     }
 
