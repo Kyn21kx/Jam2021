@@ -66,6 +66,7 @@ public class AI : MonoBehaviour {
             case States.Nutz:
                 break;
             case States.Loving:
+                movRef.Stop();
                 break;
             case States.PostAttck:
                 CanAttack = false;

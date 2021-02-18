@@ -154,7 +154,7 @@ MonoBehaviour:
   nodePosition: {x: 0, y: 0}
   currState: 0
   detectionRange: 10
-  actionRange: 4
+  actionRange: 2
   targetMask:
     serializedVersion: 2
     m_Bits: 0
@@ -180,7 +180,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 1
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!114 &6248478452662877792
 MonoBehaviour:
   m_ObjectHideFlags: 0

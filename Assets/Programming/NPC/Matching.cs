@@ -17,11 +17,12 @@ public class Matching : MonoBehaviour {
 
     public float matchingTime;
     [SerializeField]
-    private uint men;
+    private int men;
     [SerializeField]
-    private uint women;
+    private int women;
     [SerializeField]
-    private uint nonBi;
+    private int nonBi;
+    private AI selfAI;
 
     public Gender GenderId { get { return genderId; } }
     public bool Paired { get; private set; }
@@ -29,6 +30,7 @@ public class Matching : MonoBehaviour {
 
     private void Start() {
         Paired = false;
+        selfAI = GetComponent<AI>();
     }
 
     public bool Match (Matching other) {
@@ -71,8 +73,12 @@ public class Matching : MonoBehaviour {
         ReduceByMatch(other);
         other.ReduceByMatch(this);
         //Check that every single category is 0 before we pair
-        Debug.Log("Paired!");
         Paired = men <= 0 && women <= 0 && nonBi <= 0;
+        other.Paired = other.men <= 0 && other.women <= 0 && other.nonBi <= 0;
+        if (Paired)
+            selfAI.ConvertToLover();
+        if (other.Paired)
+            other.selfAI.ConvertToLover();
     }
 
     private void ReduceByMatch(Matching other) {

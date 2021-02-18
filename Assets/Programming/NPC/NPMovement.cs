@@ -27,7 +27,6 @@ public class NPMovement : MonoBehaviour {
         rig = GetComponent<Rigidbody2D>();
         path = GetComponent<AIPath>();
         agent = GetComponent<AIDestinationSetter>();
-        seeker = GetComponent<Seeker>();
         path.maxSpeed = speed;
         canMove = true;
     }
