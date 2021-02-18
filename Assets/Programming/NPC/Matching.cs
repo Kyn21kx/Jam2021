@@ -57,20 +57,24 @@ public class Matching : MonoBehaviour {
     }
 
     private void UpdateSymbols(bool start = false) {
-        float offsetX = -0.2f;
+        float offsetX = -0.3f;
         int[] preferences = { men, women, nonBi };
         Sprite[] sprites = { male, female, nBinary };
         for (int i = 0; i < 3; i++) {
             if (preferences[i] > 0) {
                 symbols[i] = symbols[i] == null ? Instantiate(symbolCountPref, transform) : symbols[i];
                 symbols[i].transform.localPosition = new Vector2(offsetX, symbols[i].transform.localPosition.y);
-                offsetX += 0.2f;
+                offsetX += 0.3f;
             }
+            else if (symbols[i] != null)
+                Destroy(symbols[i]);
+
             SpawnSymbol(symbols[i], sprites[i], preferences[i], start);
         }
     }
 
     private void SpawnSymbol(GameObject obj, Sprite sprite, int amnt, bool start) {
+        if (obj == null) return;
         if (start) {
             SpriteRenderer renderer = obj.GetComponent<SpriteRenderer>();
             renderer.sprite = sprite;
