@@ -22,6 +22,11 @@ public class Matching : MonoBehaviour {
     private int women;
     [SerializeField]
     private int nonBi;
+
+    private int auxMen;
+    private int auxWomen;
+    private int auxNonBi;
+
     private AI selfAI;
 
     public Gender GenderId { get { return genderId; } }
@@ -29,6 +34,9 @@ public class Matching : MonoBehaviour {
     #endregion
 
     private void Start() {
+        auxMen = men;
+        auxWomen = women;
+        auxNonBi = nonBi;
         Paired = false;
         selfAI = GetComponent<AI>();
     }
@@ -79,6 +87,15 @@ public class Matching : MonoBehaviour {
             selfAI.ConvertToLover();
         if (other.Paired)
             other.selfAI.ConvertToLover();
+    }
+
+    /// <summary>
+    /// Sets the values for "wanted" people to their original values
+    /// </summary>
+    public void RestorePreferences() {
+        men = auxMen;
+        women = auxWomen;
+        nonBi = auxNonBi;
     }
 
     private void ReduceByMatch(Matching other) {

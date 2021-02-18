@@ -99,7 +99,7 @@ public class Shooting : MonoBehaviour {
     }
 
     private bool ValidTargets(AI t1, AI t2) {
-        return t1.OpenForMatch && t2.OpenForMatch && !t1.MatchRef.Paired && !t2.MatchRef.Paired;
+        return t1 != t2 && t1.OpenForMatch && t2.OpenForMatch && !t1.MatchRef.Paired && !t2.MatchRef.Paired;
     }
 
     private void Shoot(float distance) {

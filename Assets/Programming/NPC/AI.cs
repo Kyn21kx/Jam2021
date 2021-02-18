@@ -66,7 +66,7 @@ public class AI : MonoBehaviour {
             case States.Nutz:
                 break;
             case States.Loving:
-                movRef.Stop();
+                currState = States.Patrol;
                 break;
             case States.PostAttck:
                 CanAttack = false;
@@ -84,6 +84,9 @@ public class AI : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Manages the stun behaviours and countdown
+    /// </summary>
     private void StunManager() {
         if (Stunned) {
             auxStunTime -= Time.deltaTime;
@@ -202,6 +205,7 @@ public class AI : MonoBehaviour {
     public void ConvertToHater() {
         lover = false;
         SetNewLHValues();
+        MatchRef.RestorePreferences();
         CurrentTarget = null;
         currState = States.Patrol;
     }
