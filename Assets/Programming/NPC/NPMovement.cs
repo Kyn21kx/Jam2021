@@ -20,13 +20,14 @@ public class NPMovement : MonoBehaviour {
     public LayerMask obstacleLayer;
     public bool canMove;
 
-    public Transform TargetPosHolder { get { return agent.target; } }
+    public Transform TargetPosHolder { get; private set; }
     #endregion
 
-    private void Start() {
+    private void Awake() {
         rig = GetComponent<Rigidbody2D>();
         path = GetComponent<AIPath>();
         agent = GetComponent<AIDestinationSetter>();
+        TargetPosHolder = agent.target;
         path.maxSpeed = speed;
         canMove = true;
     }

@@ -2,17 +2,54 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LoverCombat : MonoBehaviour
-{
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+public class LoverCombat : MonoBehaviour {
+
+    //TODO: REFACTOR THIS PLEASEEEEEEEEEEEEEEEEEEEEEE
+    #region Variables
+    [SerializeField]
+    AI personBuffer;
+    #endregion
+
+    private void Start() {
+        personBuffer = null;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    public void BufferPerson(AI personRef) {
+        personRef.BeginMatch();
+        if (personBuffer == null) {
+            //Stun the person for a couple of seconds
+            personBuffer = personRef;
+            //Send the information to the UI
+        }
+        else {
+            //Pair them
+            if (ValidTargets(personRef, personBuffer)) {
+                var match1 = personRef.MatchRef;
+                var match2 = personBuffer.MatchRef;
+
+                if (match1.Match(match2)) {
+                    match1.Pair(match2);
+                    //Clean them and reset their states
+                    personRef.movRef.canMove = true;
+                    personRef.movRef.ResumePath();
+
+                    personBuffer.movRef.canMove = true;
+                    personBuffer.movRef.ResumePath();
+
+                    personRef.StopAllCoroutines();
+                    personBuffer.StopAllCoroutines();
+                    personBuffer = null;
+                }
+                else {
+                    //Make 'em go crazy
+                }
+
+            }
+        }
     }
+
+    private bool ValidTargets(AI t1, AI t2) {
+        return t1 != t2 && t1.OpenForMatch && t2.OpenForMatch && !t1.MatchRef.Paired && !t2.MatchRef.Paired;
+    }
+
 }

@@ -56,10 +56,11 @@ public class Projectile : MonoBehaviour {
 
     private bool Detect() {
         LayerMask targetMask;
-        if (shootingRef == null) {
+        if (shootingRef == null && !firingAI.lover) {
             int playerMask = 1 << 9;
             int loverLayer = 1 << 10;
             targetMask = playerMask | loverLayer;
+
         }
         else {
             int hatersMask = 1 << 8;
@@ -67,14 +68,19 @@ public class Projectile : MonoBehaviour {
         }
         RaycastHit2D hit = Physics2D.Raycast(rig.position, transform.forward, 1f, targetMask);
         if (hit.transform != null) {
+            AI aiRef;
             if (shootingRef == null) {
-                Utilities.playerRef.GetComponent<HealthManager>().Damage();
+                if (firingAI.lover) {
+                    aiRef = hit.transform.GetComponent<AI>();
+                    aiRef.LoverCombatRef.BufferPerson(aiRef);
+                }
+                else
+                    Utilities.playerRef.GetComponent<HealthManager>().Damage();
                 return true;
             }
             //Send the player a reference to the hater object
-            AI aiRef = hit.transform.GetComponent<AI>();
+            aiRef = hit.transform.GetComponent<AI>();
             shootingRef.BufferPerson(aiRef);
-            //Stun the hater (soon to be lover) for a bit
             return true;
 
         }

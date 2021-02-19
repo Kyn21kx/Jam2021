@@ -30,6 +30,7 @@ public class Matching : MonoBehaviour {
     private int auxNonBi;
 
     private AI selfAI;
+    private List<Matching> previousMatches;
     [SerializeField]
     private GameObject symbolCountPref;
     [SerializeField]
@@ -41,19 +42,43 @@ public class Matching : MonoBehaviour {
     #endregion
 
     private void Start() {
+        SetRandValues();
+    }
+
+    private void Initialize() {
         selfAI = GetComponent<AI>();
         auxMen = men;
         auxWomen = women;
         auxNonBi = nonBi;
         symbols = new GameObject[3];
+        previousMatches = new List<Matching>();
 
         UpdateSymbols(start: true);
 
         Paired = false;
+        GetComponentInChildren<TextMeshPro>().SetText(genderId.ToString());
+
     }
 
     private void Update() {
         UpdateSymbols();
+    }
+
+    public void SetRandValues() {
+        genderId = (Gender)Random.Range(0, 3);
+        Randomize:
+        int p = Random.Range(0, 3);
+        if (p == 2)
+            men = Random.Range(0, 5);
+        p = Random.Range(0, 2);
+        if (p == 1)
+            women = Random.Range(0, 5);
+        p = Random.Range(0, 2);
+        if (p == 0)
+            nonBi = Random.Range(0, 5);
+        if (men <= 0 && women <= 0 && nonBi <= 0)
+            goto Randomize;
+        Initialize();
     }
 
     private void UpdateSymbols(bool start = false) {
@@ -62,7 +87,10 @@ public class Matching : MonoBehaviour {
         Sprite[] sprites = { male, female, nBinary };
         for (int i = 0; i < 3; i++) {
             if (preferences[i] > 0) {
-                symbols[i] = symbols[i] == null ? Instantiate(symbolCountPref, transform) : symbols[i];
+                
+                if (symbols[i] == null)
+                    symbols[i] = Instantiate(symbolCountPref, transform);
+                
                 symbols[i].transform.localPosition = new Vector2(offsetX, symbols[i].transform.localPosition.y);
                 offsetX += 0.3f;
             }
@@ -80,10 +108,11 @@ public class Matching : MonoBehaviour {
             renderer.sprite = sprite;
         }
         TextMeshPro txt = obj.GetComponentInChildren<TextMeshPro>();
-        txt.SetText("x" + amnt);
+        txt.text = ("x" + amnt);
     }
 
     public bool Match (Matching other) {
+        if (previousMatches.Contains(other)) return false;
         //The only thing that we need to check is if the gender identity is included
         switch (GenderId) {
             case Gender.Man:
@@ -115,6 +144,16 @@ public class Matching : MonoBehaviour {
         }
         return true;
     }
+    /// <summary>
+    /// Increases by one the number of matches according to the gender, and removes itself and any previous matches
+    /// </summary>
+    private void IncreaseMatchesAndRemove() {
+        foreach (var match in previousMatches) {
+            match.IncreaseByMatch(this);
+            match.previousMatches.Remove(this);
+            this.previousMatches.Remove(match);
+        }
+    }
 
     /// <summary>
     /// Reduces an element from the match and pairs the two couples
@@ -122,6 +161,9 @@ public class Matching : MonoBehaviour {
     public void Pair(Matching other) {
         ReduceByMatch(other);
         other.ReduceByMatch(this);
+
+        previousMatches.Add(other);
+        other.previousMatches.Add(this);
         //Check that every single category is 0 before we pair
         Paired = men <= 0 && women <= 0 && nonBi <= 0;
         other.Paired = other.men <= 0 && other.women <= 0 && other.nonBi <= 0;
@@ -139,6 +181,7 @@ public class Matching : MonoBehaviour {
         women = auxWomen;
         nonBi = auxNonBi;
         Paired = false;
+        IncreaseMatchesAndRemove();
     }
 
     private void ReduceByMatch(Matching other) {
@@ -151,6 +194,20 @@ public class Matching : MonoBehaviour {
                 break;
             case Gender.NonBinary:
                 nonBi--;
+                break;
+        }
+    }
+
+    private void IncreaseByMatch(Matching other) {
+        switch (other.GenderId) {
+            case Gender.Man:
+                men++;
+                break;
+            case Gender.Woman:
+                women++;
+                break;
+            case Gender.NonBinary:
+                nonBi++;
                 break;
         }
     }
