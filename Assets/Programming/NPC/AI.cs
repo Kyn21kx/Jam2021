@@ -14,6 +14,9 @@ public class AI : MonoBehaviour {
 
     #region Variables
     public bool lover;
+    public bool ranged;
+    [SerializeField]
+    private GameObject projectile;
     private Transform playerRef;
     public Transform CurrentTarget { get; private set; }
     public NPMovement movRef;
@@ -30,6 +33,9 @@ public class AI : MonoBehaviour {
     private float conversionTimer;
     [SerializeField]
     private float auxStunTime;
+    private float rangedAttCooldown;
+    [SerializeField]
+    private float projMaxDistance, projSpeed;
     public Matching MatchRef { get; private set; }
     public bool OpenForMatch { get; private set; }
     public bool CanAttack { get; private set; }
@@ -145,8 +151,21 @@ public class AI : MonoBehaviour {
         if (hit.transform != null && CanAttack) {
             if (playerRef.Equals(CurrentTarget)) {
                 //Get the health component and fuck him up
-                playerRef.GetComponent<HealthManager>().Damage();
-                currState = States.PostAttck;
+                if (!ranged) {
+                    playerRef.GetComponent<HealthManager>().Damage();
+                    currState = States.PostAttck;
+                }
+                else {
+                    if (rangedAttCooldown <= 0f) {
+                        var instance = Instantiate(projectile, transform.position, Quaternion.identity);
+                        Projectile projInstance = instance.GetComponent<Projectile>();
+                        //t = v / d
+                        projInstance.Initiate((CurrentTarget.position - transform.position).normalized, projSpeed, this, projMaxDistance);
+                        rangedAttCooldown = 2f;
+                    }
+                    else
+                        rangedAttCooldown -= Time.deltaTime;
+                }
                 return;
             }
             AI loverRef = CurrentTarget.GetComponent<AI>();
