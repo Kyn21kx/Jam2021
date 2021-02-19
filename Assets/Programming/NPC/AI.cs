@@ -247,8 +247,10 @@ public class AI : MonoBehaviour {
     public void ConvertToHater() {
         lover = false;
         SetNewLHValues();
-        MatchRef.RestorePreferences();
         CurrentTarget = null;
+        MatchRef.RestorePreferences();
+        movRef.canMove = true;
+        movRef.ResumePath();
         currState = States.Patrol;
     }
 

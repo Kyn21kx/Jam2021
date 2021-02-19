@@ -30,6 +30,7 @@ public class Matching : MonoBehaviour {
     private int auxNonBi;
 
     private AI selfAI;
+    [SerializeField]
     private List<Matching> previousMatches;
     [SerializeField]
     private GameObject symbolCountPref;
@@ -42,7 +43,7 @@ public class Matching : MonoBehaviour {
     #endregion
 
     private void Start() {
-        SetRandValues();
+        Initialize();
     }
 
     private void Initialize() {
@@ -148,10 +149,10 @@ public class Matching : MonoBehaviour {
     /// Increases by one the number of matches according to the gender, and removes itself and any previous matches
     /// </summary>
     private void IncreaseMatchesAndRemove() {
-        foreach (var match in previousMatches) {
-            match.IncreaseByMatch(this);
-            match.previousMatches.Remove(this);
-            this.previousMatches.Remove(match);
+        for (int i = 0; i < previousMatches.Count; i++) {
+            Matching match = previousMatches[i];
+            match.previousMatches.RemoveAt(i);
+            this.previousMatches.RemoveAt(i--);
         }
     }
 
