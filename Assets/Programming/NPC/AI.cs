@@ -30,9 +30,9 @@ public class AI : MonoBehaviour {
     [SerializeField]
     private LayerMask targetMask;
     
-    private float conversionTimer;
-    [SerializeField]
-    private float conversionTime;
+    [HideInInspector]
+    public float conversionTimer;
+    public float conversionTime;
     private float prevConversionValue;
     [SerializeField]
     private float auxStunTime;
@@ -255,7 +255,7 @@ public class AI : MonoBehaviour {
         AI loverRef = CurrentTarget.GetComponent<AI>();
         loverRef.conversionTimer += Time.deltaTime;
         
-        if (loverRef.conversionTimer >= 1f) {
+        if (loverRef.conversionTimer >= conversionTime) {
             //Attack
             loverRef.ConvertToHater();
             loverRef.conversionTimer = 0f;
