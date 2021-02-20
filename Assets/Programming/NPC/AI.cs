@@ -118,9 +118,11 @@ public class AI : MonoBehaviour {
                 if (nutzTime > 4f) {
                     GetComponent<SpriteRenderer>().color = Color.gray;
                     nutzTime = 0f;
+                    movRef.Speed = movRef.AuxSpeed;
                     currState = States.Patrol;
                     break;
                 }
+                movRef.Speed = movRef.AuxSpeed * 2.5f;
                 GetComponent<SpriteRenderer>().color = Color.red;
                 nutzTime += Time.deltaTime;
                 StartCoroutine(GoNutz(0.5f));

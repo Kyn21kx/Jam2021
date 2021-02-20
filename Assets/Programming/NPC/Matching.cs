@@ -39,7 +39,7 @@ public class Matching : MonoBehaviour {
     [SerializeField]
     private Sprite male, female, nBinary;
     public Gender GenderId { get { return genderId; } }
-    public bool Paired { get; private set; }
+    public bool Paired { get { return men <= 0 && women <= 0 && nonBi <= 0; } }
     public AI AI_Ref { get { return selfAI; } }
     #endregion
 
@@ -57,7 +57,6 @@ public class Matching : MonoBehaviour {
 
         UpdateSymbols(start: true);
 
-        Paired = false;
         GetComponentInChildren<TextMeshPro>().SetText(genderId.ToString());
 
     }
@@ -170,13 +169,28 @@ public class Matching : MonoBehaviour {
         previousMatches.Add(other);
         other.previousMatches.Add(this);
         //Check that every single category is 0 before we pair
-        Paired = men <= 0 && women <= 0 && nonBi <= 0;
-        other.Paired = other.men <= 0 && other.women <= 0 && other.nonBi <= 0;
-        if (ValidPair() && Paired)
-            selfAI.ConvertToLover();
+        if (ValidPair() && Paired) {
+            ChainLovers();
+        }
         //Really ugly thing
-        if (other.ValidPair() && other.Paired)
-            other.selfAI.ConvertToLover();
+        if (other.ValidPair() && other.Paired) {
+            ChainLovers();
+        }
+    }
+
+
+    public void ChainLovers() {
+        List<Matching> totalLovers = previousMatches;
+        for (int i = 0; i < previousMatches.Count; i++) {
+            Matching match = previousMatches[i];
+            for (int j = 0; j < match.previousMatches.Count; j++) {
+                if (!totalLovers.Contains(match.previousMatches[j]) && match.previousMatches[j].Paired)
+                    totalLovers.Add(match.previousMatches[j]);
+            }
+        }
+        totalLovers.ForEach((x) => {
+            x.selfAI.ConvertToLover();
+        });
     }
 
     public bool ValidPair() {
@@ -194,7 +208,6 @@ public class Matching : MonoBehaviour {
         men = auxMen;
         women = auxWomen;
         nonBi = auxNonBi;
-        Paired = false;
         IncreaseMatchesAndRemove();
         UpdateSymbols(start: true);
     }

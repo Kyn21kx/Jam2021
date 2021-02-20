@@ -53,6 +53,7 @@ public class LoverCombat : MonoBehaviour {
 
                     match2.AI_Ref.ResetNode();
                     match2.AI_Ref.currState = AI.States.Nutz;
+                    personBuffer = null;
                 }
 
             }

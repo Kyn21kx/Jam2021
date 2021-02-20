@@ -21,6 +21,8 @@ public class NPMovement : MonoBehaviour {
     public bool canMove;
 
     public Transform TargetPosHolder { get; private set; }
+    public float Speed { get { return speed; } set { speed = value; path.maxSpeed = value; } }
+    public float AuxSpeed { get; private set; }
     #endregion
 
     private void Awake() {
@@ -30,6 +32,7 @@ public class NPMovement : MonoBehaviour {
         TargetPosHolder = agent.target;
         path.maxSpeed = speed;
         canMove = true;
+        AuxSpeed = speed;
     }
 
     public void Move(Vector2 position) {
