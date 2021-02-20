@@ -3,6 +3,7 @@
 public abstract class Utilities {
 
     public static Transform playerRef;
+    public static ScoreManager scoreManager;
 
     public static Vector2 GetRandomVector(float xMin, float xMax, float yMin, float yMax) {
         float x = Random.Range(xMin, xMax);

@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour {
 
     private void Start() {
         Utilities.playerRef = GameObject.FindGameObjectWithTag("Player").transform;
+        Utilities.scoreManager = FindObjectOfType<ScoreManager>();
         pathSettings = GetComponent<AstarPath>();
         //Make sure this always works
         PathGrid = (GridGraph)pathSettings.graphs[0];
