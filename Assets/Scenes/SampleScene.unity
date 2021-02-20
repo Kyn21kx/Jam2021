@@ -228,6 +228,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: NPC Test 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6248478452662877805, guid: 3e6e698270fd60346ba8ea78f8eae8ef, type: 3}
+      propertyPath: women
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3e6e698270fd60346ba8ea78f8eae8ef, type: 3}
 --- !u!1 &705507993
@@ -437,6 +441,18 @@ PrefabInstance:
     - target: {fileID: 6248478452662877799, guid: 3e6e698270fd60346ba8ea78f8eae8ef, type: 3}
       propertyPath: m_Name
       value: NPC Test 1 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6248478452662877805, guid: 3e6e698270fd60346ba8ea78f8eae8ef, type: 3}
+      propertyPath: men
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6248478452662877806, guid: 3e6e698270fd60346ba8ea78f8eae8ef, type: 3}
+      propertyPath: ranged
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6248478452662877806, guid: 3e6e698270fd60346ba8ea78f8eae8ef, type: 3}
+      propertyPath: actionRange
+      value: 20
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3e6e698270fd60346ba8ea78f8eae8ef, type: 3}

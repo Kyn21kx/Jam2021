@@ -33,6 +33,7 @@ public class AI : MonoBehaviour {
     private float conversionTimer;
     [SerializeField]
     private float auxStunTime;
+    private float nutzTime;
     private float rangedAttCooldown;
     [SerializeField]
     private float projMaxDistance, projSpeed;
@@ -56,6 +57,7 @@ public class AI : MonoBehaviour {
         currState = States.Patrol;
         CurrentTarget = null;
         CanAttack = true;
+        nutzTime = 0f;
         SetNewLHValues();
         nodePosition = movRef.TargetPosHolder.position;
     }
@@ -74,6 +76,17 @@ public class AI : MonoBehaviour {
                     RunAway();
                 break;
             case States.Nutz:
+                if (nutzTime == 0f)
+                    RecoverStun();
+                if (nutzTime > 4f) {
+                    GetComponent<SpriteRenderer>().color = Color.gray;
+                    nutzTime = 0f;
+                    currState = States.Patrol;
+                    break;
+                }
+                GetComponent<SpriteRenderer>().color = Color.red;
+                nutzTime += Time.deltaTime;
+                StartCoroutine(GoNutz(0.5f));
                 break;
             case States.Loving:
                 if (!movRef.HasArrived(playerRef.position, 5f)) {
@@ -136,6 +149,17 @@ public class AI : MonoBehaviour {
         movRef.Move(nodePosition);
     }
 
+    private IEnumerator GoNutz(float changeTime) {
+        //Create random magnitude as well
+        float magnitude = Random.Range(10f, 20f);
+        Vector2 nPos = Utilities.GetRandomVector(0f, 1f) * magnitude;
+        //Random position from 0 to 1
+        nodePosition = nPos;
+        yield return new WaitForSeconds(changeTime);
+
+        movRef.Move(nodePosition);
+    }
+
     private void RunAway() {
         if (CurrentTarget.GetComponent<AI>().CurrentTarget != transform) {
             currState = States.Patrol;
@@ -150,6 +174,11 @@ public class AI : MonoBehaviour {
         }
         movRef.Move(nodePosition);
     }
+
+    public void ResetNode() {
+        nodePosition = transform.position;
+    }
+
     private void Chase() {
         //Maybe refactor this a bit
         //If we detect the player instead of a lover, switch to them [IN REVIEW]

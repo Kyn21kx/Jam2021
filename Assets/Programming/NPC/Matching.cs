@@ -40,6 +40,7 @@ public class Matching : MonoBehaviour {
     private Sprite male, female, nBinary;
     public Gender GenderId { get { return genderId; } }
     public bool Paired { get; private set; }
+    public AI AI_Ref { get { return selfAI; } }
     #endregion
 
     private void Start() {
@@ -151,7 +152,10 @@ public class Matching : MonoBehaviour {
     private void IncreaseMatchesAndRemove() {
         for (int i = 0; i < previousMatches.Count; i++) {
             Matching match = previousMatches[i];
-            match.previousMatches.RemoveAt(i);
+            
+            match.IncreaseByMatch(this);
+            match.previousMatches.Remove(this);
+            
             this.previousMatches.RemoveAt(i--);
         }
     }
@@ -183,6 +187,7 @@ public class Matching : MonoBehaviour {
         nonBi = auxNonBi;
         Paired = false;
         IncreaseMatchesAndRemove();
+        UpdateSymbols(start: true);
     }
 
     private void ReduceByMatch(Matching other) {
@@ -199,7 +204,7 @@ public class Matching : MonoBehaviour {
         }
     }
 
-    private void IncreaseByMatch(Matching other) {
+    public void IncreaseByMatch(Matching other) {
         switch (other.GenderId) {
             case Gender.Man:
                 men++;

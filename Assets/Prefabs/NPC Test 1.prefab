@@ -323,7 +323,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lover: 0
   ranged: 0
-  projectile: {fileID: 0}
+  projectile: {fileID: 2870693454530301450, guid: 3e9ce8fd7653a864a82e3cd1b9a64324, type: 3}
   movRef: {fileID: 0}
   nodePosition: {x: 0, y: 0}
   currState: 0
@@ -334,8 +334,8 @@ MonoBehaviour:
     m_Bits: 0
   conversionTimer: 0
   auxStunTime: 0
-  projMaxDistance: 0
-  projSpeed: 0
+  projMaxDistance: 50
+  projSpeed: 40
 --- !u!114 &7111352421121546674
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -366,6 +366,7 @@ MonoBehaviour:
   men: 1
   women: 0
   nonBi: 0
+  previousMatches: []
   symbolCountPref: {fileID: 6692588716018890100, guid: 434f66bb0792c2b4a9eab646fbb23282, type: 3}
   symbols: []
   male: {fileID: 21300000, guid: efd2ef1258d7bce449b3c7de7e5880a9, type: 3}
