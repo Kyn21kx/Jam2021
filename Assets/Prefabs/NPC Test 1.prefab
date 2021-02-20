@@ -501,9 +501,10 @@ MonoBehaviour:
   conversionTimer: 0
   conversionTime: 2
   auxStunTime: 0
+  rangedAttCooldown: 0
   conversionBars: {fileID: 5126110571315591087}
   projMaxDistance: 50
-  projSpeed: 40
+  projSpeed: 50
 --- !u!114 &7111352421121546674
 MonoBehaviour:
   m_ObjectHideFlags: 0

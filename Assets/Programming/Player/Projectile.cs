@@ -76,7 +76,13 @@ public class Projectile : MonoBehaviour {
                 }
                 else {
                     //Make case for hitting a lover
-                    Utilities.playerRef.GetComponent<HealthManager>().Damage();
+                    if (!hit.transform.CompareTag("Player")) {
+                        aiRef = hit.transform.GetComponent<AI>();
+                        float accumulateAmnt = (aiRef.conversionTime / 1.1f);
+                        aiRef.rangedConversion = 2f;
+                    }
+                    else
+                        Utilities.playerRef.GetComponent<HealthManager>().Damage();
                 }
                 return true;
             }

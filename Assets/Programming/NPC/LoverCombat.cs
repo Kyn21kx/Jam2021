@@ -42,6 +42,11 @@ public class LoverCombat : MonoBehaviour {
                 }
                 else {
                     //Make 'em go crazy
+                    match1.AI_Ref.ResetNode();
+                    match1.AI_Ref.currState = AI.States.Nutz;
+
+                    match2.AI_Ref.ResetNode();
+                    match2.AI_Ref.currState = AI.States.Nutz;
                 }
 
             }

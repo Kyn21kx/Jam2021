@@ -30,14 +30,18 @@ public class AI : MonoBehaviour {
     [SerializeField]
     private LayerMask targetMask;
     
-    [HideInInspector]
+    [SerializeField]
     public float conversionTimer;
     public float conversionTime;
+    /// <summary>
+    /// Acts like a poison value
+    /// </summary>
+    public float rangedConversion;
     private float prevConversionValue;
     [SerializeField]
     private float auxStunTime;
     private float nutzTime;
-    private float rangedAttCooldown;
+    public float rangedAttCooldown;
     [SerializeField]
     private GameObject conversionBars;
     [SerializeField]
@@ -76,11 +80,16 @@ public class AI : MonoBehaviour {
     }
 
     private void ManageConversionValues() {
+        if (rangedConversion > 0f) {
+            rangedConversion -= Time.deltaTime;
+            conversionTimer += 0.5f * Time.deltaTime;
+        }
         if (conversionTimer == prevConversionValue)
             conversionTimer -= Time.deltaTime;
+        rangedConversion = Mathf.Clamp(rangedConversion, 0f, 2f);
         conversionTimer = Mathf.Clamp(conversionTimer, 0f, conversionTime);
         //UI display for health bar
-        if (conversionTimer > 0f) {
+        if (conversionTimer > 0f && lover) {
             conversionBars.SetActive(true);
             float ratio = conversionTimer / conversionTime;
             Transform barToScale = conversionBars.transform.GetChild(0);
@@ -242,7 +251,7 @@ public class AI : MonoBehaviour {
                     Projectile projInstance = instance.GetComponent<Projectile>();
                     //t = v / d
                     projInstance.Initiate((CurrentTarget.position - transform.position).normalized, projSpeed, this, projMaxDistance);
-                    rangedAttCooldown = 2f;
+                    rangedAttCooldown = 1.5f;
                 }
                 else
                     rangedAttCooldown -= Time.deltaTime;
@@ -251,9 +260,23 @@ public class AI : MonoBehaviour {
         }
         #endregion
 
-        #region Attacking a lover
+            #region Attacking a lover
         AI loverRef = CurrentTarget.GetComponent<AI>();
-        loverRef.conversionTimer += Time.deltaTime;
+        if (!ranged)
+            loverRef.conversionTimer += Time.deltaTime;
+        else {
+            if (rangedAttCooldown <= 0f) {
+                var instance = Instantiate(projectile, transform.position, Quaternion.identity);
+                Projectile projInstance = instance.GetComponent<Projectile>();
+                //t = v / d
+                projInstance.Initiate((CurrentTarget.position - transform.position).normalized, projSpeed, this, projMaxDistance);
+                rangedAttCooldown = 2f;
+            }
+            else
+                rangedAttCooldown -= Time.deltaTime;
+        }
+
+        //Ranged attacks are managed by the projectile script
         
         if (loverRef.conversionTimer >= conversionTime) {
             //Attack
