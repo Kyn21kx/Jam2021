@@ -14,6 +14,12 @@ public class LoverCombat : MonoBehaviour {
         personBuffer = null;
     }
 
+    public void Hunt(AI agentRef) {
+        if (agentRef.CurrentTarget != null) {
+
+        }
+    }
+
     public void BufferPerson(AI personRef) {
         personRef.BeginMatch();
         if (personBuffer == null) {

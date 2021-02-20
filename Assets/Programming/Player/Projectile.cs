@@ -6,6 +6,7 @@ using UnityEngine;
 public class Projectile : MonoBehaviour {
 
     #region Variables
+    public float collisionRadius;
     public Vector2 dir;
     public float travelSpeed;
     private float cntr = 0f;
@@ -54,6 +55,11 @@ public class Projectile : MonoBehaviour {
         }
     }
 
+    private void OnDrawGizmos() {
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, collisionRadius);
+    }
+
     private bool Detect() {
         LayerMask targetMask;
         if (shootingRef == null && !firingAI.lover) {
@@ -66,7 +72,7 @@ public class Projectile : MonoBehaviour {
             int hatersMask = 1 << 8;
             targetMask = hatersMask;
         }
-        RaycastHit2D hit = Physics2D.Raycast(rig.position, transform.forward, 1f, targetMask);
+        RaycastHit2D hit = Physics2D.CircleCast(rig.position, collisionRadius, Vector2.zero, 0f, targetMask);
         if (hit.transform != null) {
             AI aiRef;
             if (shootingRef == null) {

@@ -172,10 +172,19 @@ public class Matching : MonoBehaviour {
         //Check that every single category is 0 before we pair
         Paired = men <= 0 && women <= 0 && nonBi <= 0;
         other.Paired = other.men <= 0 && other.women <= 0 && other.nonBi <= 0;
-        if (Paired)
+        if (ValidPair() && Paired)
             selfAI.ConvertToLover();
-        if (other.Paired)
+        //Really ugly thing
+        if (other.ValidPair() && other.Paired)
             other.selfAI.ConvertToLover();
+    }
+
+    public bool ValidPair() {
+        for (int i = 0; i < previousMatches.Count; i++) {
+            if (!previousMatches[i].Paired)
+                return false;
+        }
+        return true;
     }
 
     /// <summary>
