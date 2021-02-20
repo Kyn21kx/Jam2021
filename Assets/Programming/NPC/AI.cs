@@ -29,12 +29,17 @@ public class AI : MonoBehaviour {
     private float actionRange;
     [SerializeField]
     private LayerMask targetMask;
-    [SerializeField]
+    
     private float conversionTimer;
+    [SerializeField]
+    private float conversionTime;
+    private float prevConversionValue;
     [SerializeField]
     private float auxStunTime;
     private float nutzTime;
     private float rangedAttCooldown;
+    [SerializeField]
+    private GameObject conversionBars;
     [SerializeField]
     private float projMaxDistance, projSpeed;
     public Matching MatchRef { get; private set; }
@@ -57,6 +62,7 @@ public class AI : MonoBehaviour {
         currState = States.Patrol;
         CurrentTarget = null;
         CanAttack = true;
+        conversionBars.SetActive(false);
         nutzTime = 0f;
         SetNewLHValues();
         nodePosition = movRef.TargetPosHolder.position;
@@ -65,6 +71,28 @@ public class AI : MonoBehaviour {
     private void Update() {
         StunManager();
         //FSM
+        FiniteStateMachine();
+        ManageConversionValues();
+    }
+
+    private void ManageConversionValues() {
+        if (conversionTimer == prevConversionValue)
+            conversionTimer -= Time.deltaTime;
+        conversionTimer = Mathf.Clamp(conversionTimer, 0f, conversionTime);
+        //UI display for health bar
+        if (conversionTimer > 0f) {
+            conversionBars.SetActive(true);
+            float ratio = conversionTimer / conversionTime;
+            Transform barToScale = conversionBars.transform.GetChild(0);
+            barToScale.localScale = new Vector3(ratio, 1f, 1f);
+        }
+        else
+            conversionBars.SetActive(false);
+
+        prevConversionValue = conversionTimer;
+    }
+
+    private void FiniteStateMachine() {
         switch (currState) {
             case States.Patrol:
                 StartCoroutine(Patrol());
@@ -196,10 +224,6 @@ public class AI : MonoBehaviour {
         }
         else {
             //Keep moving and reset the lover's timer if applicable
-            if (!playerRef.Equals(CurrentTarget)) {
-                AI loverRef = CurrentTarget.GetComponent<AI>();
-                loverRef.conversionTimer = 0f;
-            }
             movRef.Move(CurrentTarget.position);
         }
     }
@@ -265,7 +289,7 @@ public class AI : MonoBehaviour {
             targetMask = playerLayer | loverLayer;
         }
     }
-
+    #region Conversion
     public void ConvertToLover() {
         lover = true;
         SetNewLHValues();
@@ -282,7 +306,7 @@ public class AI : MonoBehaviour {
         movRef.ResumePath();
         currState = States.Patrol;
     }
-
+    #endregion
     private Transform Detect() {
         //Circle cast
         return Physics2D.CircleCast(transform.position, detectionRange, Vector2.zero, 0f, targetMask).transform;

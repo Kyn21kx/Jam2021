@@ -74,8 +74,10 @@ public class Projectile : MonoBehaviour {
                     aiRef = hit.transform.GetComponent<AI>();
                     aiRef.LoverCombatRef.BufferPerson(aiRef);
                 }
-                else
+                else {
+                    //Make case for hitting a lover
                     Utilities.playerRef.GetComponent<HealthManager>().Damage();
+                }
                 return true;
             }
             //Send the player a reference to the hater object
