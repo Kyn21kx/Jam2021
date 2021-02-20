@@ -498,7 +498,8 @@ MonoBehaviour:
   targetMask:
     serializedVersion: 2
     m_Bits: 0
-  conversionTime: 3
+  conversionTimer: 0
+  conversionTime: 2
   auxStunTime: 0
   conversionBars: {fileID: 5126110571315591087}
   projMaxDistance: 50
