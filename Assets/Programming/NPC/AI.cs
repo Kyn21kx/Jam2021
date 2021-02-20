@@ -135,6 +135,8 @@ public class AI : MonoBehaviour {
                 }
                 else
                     movRef.Stop();
+
+
                 break;
             case States.PostAttck:
                 BackOff();
@@ -248,17 +250,8 @@ public class AI : MonoBehaviour {
                 playerRef.GetComponent<HealthManager>().Damage();
                 currState = States.PostAttck;
             }
-            else {
-                if (rangedAttCooldown <= 0f) {
-                    var instance = Instantiate(projectile, transform.position, Quaternion.identity);
-                    Projectile projInstance = instance.GetComponent<Projectile>();
-                    //t = v / d
-                    projInstance.Initiate((CurrentTarget.position - transform.position).normalized, projSpeed, this, projMaxDistance);
-                    rangedAttCooldown = 1.5f;
-                }
-                else
-                    rangedAttCooldown -= Time.deltaTime;
-            }
+            else
+                Shoot();
             return;
         }
         #endregion
@@ -267,17 +260,8 @@ public class AI : MonoBehaviour {
         AI loverRef = CurrentTarget.GetComponent<AI>();
         if (!ranged)
             loverRef.conversionTimer += Time.deltaTime;
-        else {
-            if (rangedAttCooldown <= 0f) {
-                var instance = Instantiate(projectile, transform.position, Quaternion.identity);
-                Projectile projInstance = instance.GetComponent<Projectile>();
-                //t = v / d
-                projInstance.Initiate((CurrentTarget.position - transform.position).normalized, projSpeed, this, projMaxDistance);
-                rangedAttCooldown = 2f;
-            }
-            else
-                rangedAttCooldown -= Time.deltaTime;
-        }
+        else
+            Shoot();
 
         //Ranged attacks are managed by the projectile script
         
@@ -289,6 +273,18 @@ public class AI : MonoBehaviour {
             currState = States.Patrol;
         }
         #endregion
+    }
+
+    private void Shoot() {
+        if (rangedAttCooldown <= 0f) {
+            var instance = Instantiate(projectile, transform.position, Quaternion.identity);
+            Projectile projInstance = instance.GetComponent<Projectile>();
+            //t = v / d
+            projInstance.Initiate((CurrentTarget.position - transform.position).normalized, projSpeed, this, projMaxDistance);
+            rangedAttCooldown = 2f;
+        }
+        else
+            rangedAttCooldown -= Time.deltaTime;
     }
 
     /// <summary>
@@ -317,6 +313,8 @@ public class AI : MonoBehaviour {
     }
     #region Conversion
     public void ConvertToLover() {
+        if (lover) return;
+        Utilities.scoreManager.score++;
         lover = true;
         SetNewLHValues();
         CurrentTarget = null;

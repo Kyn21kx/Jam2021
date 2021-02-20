@@ -191,8 +191,6 @@ public class Matching : MonoBehaviour {
         totalLovers.ForEach((x) => {
             x.selfAI.ConvertToLover();
         });
-
-        Utilities.scoreManager.score += totalLovers.Count;
         
     }
 
