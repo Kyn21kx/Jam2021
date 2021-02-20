@@ -128,6 +128,7 @@ public class AI : MonoBehaviour {
                 StartCoroutine(GoNutz(0.5f));
                 break;
             case States.Loving:
+                CurrentTarget = Detect();
                 if (!movRef.HasArrived(playerRef.position, 5f)) {
                     movRef.ResumePath();
                     movRef.Move(playerRef.position);

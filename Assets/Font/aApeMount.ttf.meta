@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: 776040bbb8cfa284e841e166df5872d2
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - a Ape Mount
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 61f249e42b8790e49affe48caa277605, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -500,6 +500,7 @@ MonoBehaviour:
     m_Bits: 0
   conversionTimer: 0
   conversionTime: 2
+  rangedConversion: 0
   auxStunTime: 0
   rangedAttCooldown: 0
   conversionBars: {fileID: 5126110571315591087}
