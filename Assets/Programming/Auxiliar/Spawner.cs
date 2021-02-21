@@ -10,6 +10,8 @@ public class Spawner : MonoBehaviour {
     public int forceMatchEveryN;
     int n;
     public List<Matching> previous;
+    public Transform borderX;
+    public Transform borderY;
     #endregion
 
     private void Start() {
@@ -20,7 +22,12 @@ public class Spawner : MonoBehaviour {
     }
 
     private void Spawn() {
-        var instance = Instantiate(prefab, transform.position, Quaternion.identity);
+        float minX = -borderX.position.x;
+        float maxX = borderX.position.x;
+        float maxY = borderY.position.y;
+        float minY = -borderY.position.y;
+        Vector2 nPos = Utilities.GetRandomVector(minX, maxX, minY, maxY);
+        var instance = Instantiate(prefab, nPos, Quaternion.identity);
         instance.SetActive(false);
         var matchRef = instance.GetComponent<Matching>();
         bool forceMatch = n % forceMatchEveryN == 0;
@@ -29,7 +36,10 @@ public class Spawner : MonoBehaviour {
         previous.Add(matchRef);
         instance.SetActive(true);
         n++;
-        interval *= 1.7f;
+        if ((int)interval % 3 == 0) {
+            forceMatchEveryN++;
+        }
+        interval *= 1.05f;
         Invoke("Spawn", interval);
     }
 

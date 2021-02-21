@@ -17,6 +17,9 @@ public class AI : MonoBehaviour {
     public bool ranged;
     [SerializeField]
     private GameObject projectile;
+    [SerializeField]
+    private GameObject fuckProjectile;
+
     private Transform playerRef;
     public Transform CurrentTarget { get; private set; }
     public NPMovement movRef;
@@ -46,6 +49,10 @@ public class AI : MonoBehaviour {
     private GameObject conversionBars;
     [SerializeField]
     private float projMaxDistance, projSpeed;
+    [SerializeField]
+    private Sprite[] angSprite;
+    [SerializeField]
+    private Sprite[] lovSprite;
     public Matching MatchRef { get; private set; }
     public LoverCombat LoverCombatRef { get; private set; }
     public bool OpenForMatch { get; private set; }
@@ -84,6 +91,7 @@ public class AI : MonoBehaviour {
             Utilities.gameManager.buffers.Remove(this);
         }
     }
+
 
     private void CorrectConversion() {
         if (!MatchRef.Paired || lover) return;
@@ -134,8 +142,6 @@ public class AI : MonoBehaviour {
             case States.Chase:
                 if (!lover)
                     Chase();
-                else
-                    RunAway();
                 break;
             case States.Nutz:
                 if (nutzTime == 0f) {
@@ -147,7 +153,7 @@ public class AI : MonoBehaviour {
                     nodePosition = nPos;
                 }
                 if (nutzTime > 4f) {
-                    GetComponent<SpriteRenderer>().color = Color.gray;
+                    GetComponent<SpriteRenderer>().color = Color.white;
                     nutzTime = 0f;
                     movRef.Speed = movRef.AuxSpeed;
                     currState = States.Patrol;
@@ -166,6 +172,9 @@ public class AI : MonoBehaviour {
                 movRef.Move(nodePosition);
                 break;
             case States.Loving:
+                GetComponent<SpriteRenderer>().color = Color.white;
+                nutzTime = 0f;
+                movRef.Speed = movRef.AuxSpeed;
                 CurrentTarget = Detect();
                 if (!movRef.HasArrived(playerRef.position, 5f)) {
                     movRef.ResumePath();
@@ -175,15 +184,7 @@ public class AI : MonoBehaviour {
                     movRef.Stop();
                 
                 if (CurrentTarget != null) {
-                    Vector2 toTarget = CurrentTarget.position - transform.position;
-                    float sqrDistance = toTarget.sqrMagnitude;
-
                     Shoot();
-                    
-                    //Check for distance to the current target, and if they're too close run away
-                    if (sqrDistance <= LoverCombatRef.fleeDistance * LoverCombatRef.fleeDistance)
-                        currState = States.Chase;
-
                 }
 
                 break;
@@ -262,7 +263,7 @@ public class AI : MonoBehaviour {
     }
 
     private void Chase() {
-        GetComponent<SpriteRenderer>().color = Color.gray;
+        GetComponent<SpriteRenderer>().color = Color.white;
         nutzTime = 0f;
         movRef.Speed = movRef.AuxSpeed;
         //Maybe refactor this a bit
@@ -299,7 +300,7 @@ public class AI : MonoBehaviour {
         }
         #endregion
 
-            #region Attacking a lover
+        #region Attacking a lover
         AI loverRef = CurrentTarget.GetComponent<AI>();
         if (!ranged)
             loverRef.conversionTimer += Time.deltaTime;
@@ -321,7 +322,8 @@ public class AI : MonoBehaviour {
     private void Shoot() {
         if (rangedAttCooldown <= 0f) {
             movRef.Stop();
-            var instance = Instantiate(projectile, transform.position, Quaternion.identity);
+            GameObject p = lover ? projectile : fuckProjectile;
+            var instance = Instantiate(p, transform.position, Quaternion.identity);
             Projectile projInstance = instance.GetComponent<Projectile>();
             //t = v / d
             projInstance.Initiate((CurrentTarget.position - transform.position).normalized, projSpeed, this, projMaxDistance);
@@ -338,16 +340,18 @@ public class AI : MonoBehaviour {
     private void SetNewLHValues() {
         if (lover) {
             //Change this for an animation
-            GetComponent<SpriteRenderer>().color = Color.magenta;
+            SpriteRenderer r = GetComponent<SpriteRenderer>();
             //Set own layer
             gameObject.layer = LayerMask.NameToLayer("Lovers");
+            r.sprite = lovSprite[(int)MatchRef.GenderId];
             //Set target layer
             int t = 1 << 8;
             targetMask = t;
         }
         else {
             //Change this for an animation
-            GetComponent<SpriteRenderer>().color = Color.gray;
+            SpriteRenderer r = GetComponent<SpriteRenderer>();
+            r.sprite = angSprite[(int)MatchRef.GenderId];
             //Set own layer
             gameObject.layer = LayerMask.NameToLayer("Haters");
             //Set target layers
@@ -364,6 +368,10 @@ public class AI : MonoBehaviour {
         Utilities.gameManager.lovers.Add(this);
         lover = true;
         SetNewLHValues();
+        for (int i = 0; i < MatchRef.previousMatches.Count; i++) {
+            MatchRef.previousMatches[i].previousMatches.Remove(MatchRef);
+        }
+
         CurrentTarget = null;
         currState = States.Loving;
     }

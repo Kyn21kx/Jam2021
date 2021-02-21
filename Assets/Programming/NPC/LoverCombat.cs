@@ -8,56 +8,40 @@ public class LoverCombat : MonoBehaviour {
     #region Variables
     [SerializeField]
     AI personBuffer;
+
+    AI selfAI;
     public float escapedDistance;
     public float fleeDistance;
+    public float loverTime;
+    private float auxLoverTime;
+    [SerializeField]
+    private GameObject healthBars;
     #endregion
 
     private void Start() {
-        personBuffer = null;
+        selfAI = GetComponent<AI>();
+        auxLoverTime = loverTime;
     }
 
-    public void BufferPerson(AI personRef) {
-        personRef.BeginMatch();
-        if (personBuffer == null) {
-            //Stun the person for a couple of seconds
-            personBuffer = personRef;
-            //Send the information to the UI
-        }
-        else {
-            //Pair them
-            if (ValidTargets(personRef, personBuffer)) {
-                var match1 = personRef.MatchRef;
-                var match2 = personBuffer.MatchRef;
+    private void Update() {
+        if (selfAI.lover) {
+            //Set active the bars
+            loverTime -= Time.deltaTime;
 
-                if (match1.Match(match2)) {
-                    match1.Pair(match2);
-                    //Clean them and reset their states
-                    personRef.movRef.canMove = true;
-                    personRef.movRef.ResumePath();
+            healthBars.SetActive(true);
+            float ratio = loverTime / auxLoverTime;
+            Transform barToScale = healthBars.transform.GetChild(0);
+            barToScale.localScale = new Vector3(ratio, 1f, 1f);
 
-                    personBuffer.movRef.canMove = true;
-                    personBuffer.movRef.ResumePath();
-
-                    personRef.StopAllCoroutines();
-                    personBuffer.StopAllCoroutines();
-                    personBuffer = null;
-                }
-                else {
-                    //Make 'em go crazy
-                    match1.AI_Ref.ResetNode();
-                    match1.AI_Ref.currState = AI.States.Nutz;
-
-                    match2.AI_Ref.ResetNode();
-                    match2.AI_Ref.currState = AI.States.Nutz;
-                    personBuffer = null;
-                }
-
+            if (loverTime <= 0f) {
+                Utilities.gameManager.lovers.Remove(selfAI);
+                Destroy(gameObject);
             }
         }
-    }
-
-    private bool ValidTargets(AI t1, AI t2) {
-        return t1 != t2 && t1.OpenForMatch && t2.OpenForMatch && !t1.MatchRef.Paired && !t2.MatchRef.Paired;
+        else {
+            loverTime = auxLoverTime;
+            healthBars.SetActive(false);
+        }
     }
 
     private void OnDrawGizmos() {

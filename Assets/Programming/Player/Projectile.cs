@@ -78,8 +78,10 @@ public class Projectile : MonoBehaviour {
             if (shootingRef == null) {
                 if (firingAI.lover) {
                     aiRef = hit.transform.GetComponent<AI>();
-                    aiRef.OverrideTarget(firingAI.transform);
-                    Utilities.gameManager.Buffer(aiRef);
+                    if (aiRef != null) {
+                        aiRef.OverrideTarget(firingAI.transform);
+                        Utilities.gameManager.Buffer(aiRef, directBuffer: firingAI);
+                    }
                 }
                 else {
                     //Make case for hitting a lover

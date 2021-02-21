@@ -6,6 +6,7 @@ public abstract class Utilities {
     public static ScoreManager scoreManager;
     public static Spawner spawner;
     public static GameManager gameManager;
+    public static Animator anim;
 
     public static Vector2 GetRandomVector(float xMin, float xMax, float yMin, float yMax) {
         float x = Random.Range(xMin, xMax);

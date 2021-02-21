@@ -82,7 +82,7 @@ public class Matching : MonoBehaviour {
         int rElement = Random.Range(0, previous.Count);
         int rElement2 = Random.Range(0, previous.Count);
         Randomize:
-        if ((attempts >= 2 || forceMatch) && previous.Count > 0) {
+        if ((attempts >= 3 || forceMatch) && previous.Count > 0) {
             //Instead of randomizing, just create a direct match
             Matching other = previous[rElement];
             int[] preferences = { other.men, other.women, other.nonBi };
@@ -193,6 +193,9 @@ public class Matching : MonoBehaviour {
         }
         return true;
     }
+
+ 
+
     /// <summary>
     /// Increases by one the number of matches according to the gender, and removes itself and any previous matches
     /// </summary>
@@ -223,6 +226,15 @@ public class Matching : MonoBehaviour {
         //Really ugly thing
         if (other.ValidPair() && other.Paired) {
             ChainLovers();
+        }
+    }
+
+    public void LoverPair(Matching other) {
+        other.ReduceByMatch(this);
+
+        //Really ugly thing
+        if (other.Paired) {
+            other.AI_Ref.ConvertToLover();
         }
     }
 

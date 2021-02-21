@@ -32,10 +32,12 @@ public class Movement : MonoBehaviour {
 
     private void ReadInput() {
         movVector = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-        if (movVector.x > 0f)
-            spriteRenderer.flipX = true;
-        else if (movVector.x < 0f)
-            spriteRenderer.flipX = false;
+        if (!GetComponent<Shooting>().holding) {
+            if (movVector.x > 0f)
+                spriteRenderer.flipX = true;
+            else if (movVector.x < 0f)
+                spriteRenderer.flipX = false;
+        }
     }
 
     private void Move() {

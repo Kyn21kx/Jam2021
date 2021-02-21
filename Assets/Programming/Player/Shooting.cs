@@ -12,7 +12,7 @@ public class Shooting : MonoBehaviour {
     private Camera cam;
     public AI personBuffer;
     private float holdTime;
-    private bool holding;
+    public bool holding;
     [SerializeField]
     private float cooldown;
     private float auxCooldown;
@@ -55,11 +55,22 @@ public class Shooting : MonoBehaviour {
             //Debug.LogWarning("Distance: " + d);
             holding = false;
             holdTime = 0f;
+            Utilities.anim.SetBool("Holding", false);
             Shoot(d);
         }
         //Increment x 
-        if (holding)
+        if (holding) {
             holdTime += Time.deltaTime;
+            Vector2 mousePos = cam.ScreenToWorldPoint(Input.mousePosition);
+            float xValue = mousePos.x - transform.position.x;
+            if (xValue > 0) {
+                GetComponent<SpriteRenderer>().flipX = true;
+            }
+            else {
+                GetComponent<SpriteRenderer>().flipX = false;
+            }
+            Utilities.anim.SetBool("Holding", true);
+        }
     }
 
     public void BufferPerson(AI personRef) {

@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour {
         Utilities.scoreManager = FindObjectOfType<ScoreManager>();
         Utilities.spawner = FindObjectOfType<Spawner>();
         Utilities.gameManager = this;
+        Utilities.anim = Utilities.playerRef.GetComponent<Animator>();
         pathSettings = GetComponent<AstarPath>();
         //Make sure this always works
         PathGrid = (GridGraph)pathSettings.graphs[0];
@@ -28,12 +29,32 @@ public class GameManager : MonoBehaviour {
         pathSettings.Scan(PathGrid);
     }
 
-    public void Buffer(AI personRef) {
+    public void Buffer(AI personRef, AI directBuffer=null) {
         personRef.Stun(personRef.MatchRef.matchingTime);
         if (buffers.Contains(personRef) || personRef.MatchRef.Paired) return;
+        if (directBuffer != null) {
+            BufferPerson(personRef, directBuffer);
+            return;
+        }
         buffers.Add(personRef);
         for (int i = 0; i < buffers.Count; i++) {
             BufferPerson(personRef, i);
+        }
+    }
+
+    public void BufferPerson(AI personRef, AI other) {
+        personRef.BeginMatch();
+        //Pair them
+        if (ValidTargets(personRef, other)) {
+            var match1 = personRef.MatchRef;
+            var lover = other.MatchRef;
+            lover.LoverPair(match1);
+            //Clean them and reset their states
+            personRef.movRef.canMove = true;
+            personRef.movRef.ResumePath();
+
+
+            personRef.StopAllCoroutines();
         }
     }
 
@@ -80,7 +101,7 @@ public class GameManager : MonoBehaviour {
     }
 
     private bool ValidTargets(AI t1, AI t2) {
-        return t1 != t2 && t1.OpenForMatch && t2.OpenForMatch && !t1.MatchRef.Paired && !t2.MatchRef.Paired;
+        return t1 != t2 && (t1.OpenForMatch && t2.OpenForMatch && !t1.MatchRef.Paired && !t2.MatchRef.Paired) || t2.lover;
     }
 
 }

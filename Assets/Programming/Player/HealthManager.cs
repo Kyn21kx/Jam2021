@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using TMPro;
+using UnityEngine.SceneManagement;
 
 public class HealthManager : MonoBehaviour {
 
@@ -10,6 +12,8 @@ public class HealthManager : MonoBehaviour {
     [SerializeField]
     private float invTime;
     private float auxInvTime;
+    [SerializeField]
+    private TextMeshPro txt;
     #endregion
 
     private void Start() {
@@ -18,6 +22,7 @@ public class HealthManager : MonoBehaviour {
     }
 
     private void Update() {
+        txt.SetText("x" + health);
         if (Invincible) {
             //Timer down and set it to false
             invTime -= Time.deltaTime;
@@ -32,7 +37,8 @@ public class HealthManager : MonoBehaviour {
 
     private void Die() {
         Time.timeScale = 0.5f;
-        Destroy(gameObject);
+        ScoreManager.highScore = Mathf.Max(ScoreManager.highScore, Utilities.scoreManager.score);
+        SceneManager.LoadScene(1);
     }
 
     public void Damage() {

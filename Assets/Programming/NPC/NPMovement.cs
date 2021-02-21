@@ -36,8 +36,15 @@ public class NPMovement : MonoBehaviour {
     }
 
     public void Move(Vector2 position) {
-        if (canMove)
+        if (canMove) {
+            if (position.x - transform.position.x < 0) {
+                GetComponent<SpriteRenderer>().flipX = false;
+            }
+            else {
+                GetComponent<SpriteRenderer>().flipX = true;
+            }
             TargetPosHolder.position = position;
+        }
     }
 
     public bool HasArrived(Vector2 position, float threshold) {
