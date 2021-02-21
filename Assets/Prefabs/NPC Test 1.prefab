@@ -519,6 +519,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   personBuffer: {fileID: 0}
+  escapedDistance: 15
+  fleeDistance: 5
 --- !u!114 &6248478452662877805
 MonoBehaviour:
   m_ObjectHideFlags: 0

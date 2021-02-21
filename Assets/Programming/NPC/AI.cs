@@ -135,7 +135,18 @@ public class AI : MonoBehaviour {
                 }
                 else
                     movRef.Stop();
+                
+                if (CurrentTarget != null) {
+                    Vector2 toTarget = CurrentTarget.position - transform.position;
+                    float sqrDistance = toTarget.sqrMagnitude;
 
+                    Shoot();
+                    
+                    //Check for distance to the current target, and if they're too close run away
+                    if (sqrDistance <= LoverCombatRef.fleeDistance * LoverCombatRef.fleeDistance)
+                        currState = States.Chase;
+
+                }
 
                 break;
             case States.PostAttck:
@@ -203,8 +214,10 @@ public class AI : MonoBehaviour {
     }
 
     private void RunAway() {
-        if (CurrentTarget.GetComponent<AI>().CurrentTarget != transform) {
-            currState = States.Patrol;
+        Vector2 toTarget = CurrentTarget.position - transform.position;
+        float sqrDistance = toTarget.sqrMagnitude;
+        if (sqrDistance > LoverCombatRef.escapedDistance * LoverCombatRef.escapedDistance) {
+            currState = States.Loving;
             return;
         }
         if (movRef.HasArrived(nodePosition, 0.5f)) {

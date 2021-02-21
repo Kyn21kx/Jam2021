@@ -192,9 +192,6 @@ public class Matching : MonoBehaviour {
         for (int i = 0; i < totalLovers.Count; i++) {
             totalLovers[i].selfAI.ConvertToLover();
         }
-        foreach (var match in totalLovers) {
-            match.selfAI.ConvertToLover();
-        }
         selfAI.ConvertToLover();
         
     }
