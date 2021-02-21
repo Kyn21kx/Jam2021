@@ -79,13 +79,12 @@ public class Projectile : MonoBehaviour {
                 if (firingAI.lover) {
                     aiRef = hit.transform.GetComponent<AI>();
                     aiRef.OverrideTarget(firingAI.transform);
-                    aiRef.LoverCombatRef.BufferPerson(aiRef);
+                    Utilities.gameManager.Buffer(aiRef);
                 }
                 else {
                     //Make case for hitting a lover
                     if (!hit.transform.CompareTag("Player")) {
                         aiRef = hit.transform.GetComponent<AI>();
-                        float accumulateAmnt = (aiRef.conversionTime / 1.1f);
                         aiRef.rangedConversion = 2f;
                     }
                     else
@@ -97,7 +96,7 @@ public class Projectile : MonoBehaviour {
             aiRef = hit.transform.GetComponent<AI>();
             //Override the target to the player
             aiRef.OverrideTarget(shootingRef.transform);
-            shootingRef.BufferPerson(aiRef);
+            Utilities.gameManager.Buffer(aiRef);
             return true;
 
         }

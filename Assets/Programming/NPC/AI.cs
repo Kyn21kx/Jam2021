@@ -80,6 +80,9 @@ public class AI : MonoBehaviour {
         FiniteStateMachine();
         ManageConversionValues();
         CorrectConversion();
+        if (!OpenForMatch && Utilities.gameManager.buffers.Contains(this)) {
+            Utilities.gameManager.buffers.Remove(this);
+        }
     }
 
     private void CorrectConversion() {
@@ -393,7 +396,6 @@ public class AI : MonoBehaviour {
 
     public void BeginMatch() {
         StopAllCoroutines();
-        Stun(MatchRef.matchingTime);
         OpenForMatch = true;
         StartCoroutine(CloseMatch());
     }
@@ -416,8 +418,6 @@ public class AI : MonoBehaviour {
     private IEnumerator CloseMatch() {
         yield return new WaitForSeconds(MatchRef.matchingTime);
         OpenForMatch = false;
-        var shootingRef = playerRef.GetComponent<Shooting>();
-        shootingRef.personBuffer = null;
     }
 
 }

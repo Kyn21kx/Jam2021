@@ -76,13 +76,13 @@ public class Matching : MonoBehaviour {
             Utilities.spawner.previous.Remove(this);
     }
 
-    public void SetRandValues(List<Matching> previous) {
+    public void SetRandValues(List<Matching> previous, bool forceMatch) {
         int accumulative = 0;
         int attempts = 0;
         int rElement = Random.Range(0, previous.Count);
         int rElement2 = Random.Range(0, previous.Count);
         Randomize:
-        if (attempts >= 2) {
+        if ((attempts >= 2 || forceMatch) && previous.Count > 0) {
             //Instead of randomizing, just create a direct match
             Matching other = previous[rElement];
             int[] preferences = { other.men, other.women, other.nonBi };
