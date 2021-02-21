@@ -52,7 +52,7 @@ public class Shooting : MonoBehaviour {
             //Graphics to show it
             holdTime = Mathf.Clamp(holdTime, 0f, 2f);
             float d = (holdTime * (35f / 1.5f)) + 10;
-            Debug.LogWarning("Distance: " + d);
+            //Debug.LogWarning("Distance: " + d);
             holding = false;
             holdTime = 0f;
             Shoot(d);

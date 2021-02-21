@@ -30,8 +30,7 @@ public class Matching : MonoBehaviour {
     private int auxNonBi;
 
     private AI selfAI;
-    [SerializeField]
-    private List<Matching> previousMatches;
+    public List<Matching> previousMatches;
     [SerializeField]
     private GameObject symbolCountPref;
     [SerializeField]
@@ -180,17 +179,23 @@ public class Matching : MonoBehaviour {
 
 
     public void ChainLovers() {
-        List<Matching> totalLovers = previousMatches;
+        List<Matching> totalLovers = new List<Matching>();
+        totalLovers.AddRange(previousMatches);
         for (int i = 0; i < previousMatches.Count; i++) {
             Matching match = previousMatches[i];
             for (int j = 0; j < match.previousMatches.Count; j++) {
-                if (!totalLovers.Contains(match.previousMatches[j]) && match.previousMatches[j].Paired)
+                if (!totalLovers.Contains(match.previousMatches[j]) && match.previousMatches[j].Paired) {
                     totalLovers.Add(match.previousMatches[j]);
+                }
             }
         }
-        totalLovers.ForEach((x) => {
-            x.selfAI.ConvertToLover();
-        });
+        for (int i = 0; i < totalLovers.Count; i++) {
+            totalLovers[i].selfAI.ConvertToLover();
+        }
+        foreach (var match in totalLovers) {
+            match.selfAI.ConvertToLover();
+        }
+        selfAI.ConvertToLover();
         
     }
 

@@ -277,11 +277,13 @@ public class AI : MonoBehaviour {
 
     private void Shoot() {
         if (rangedAttCooldown <= 0f) {
+            movRef.Stop();
             var instance = Instantiate(projectile, transform.position, Quaternion.identity);
             Projectile projInstance = instance.GetComponent<Projectile>();
             //t = v / d
             projInstance.Initiate((CurrentTarget.position - transform.position).normalized, projSpeed, this, projMaxDistance);
             rangedAttCooldown = 2f;
+            movRef.ResumePath();
         }
         else
             rangedAttCooldown -= Time.deltaTime;
@@ -328,6 +330,7 @@ public class AI : MonoBehaviour {
         MatchRef.RestorePreferences();
         movRef.canMove = true;
         movRef.ResumePath();
+        MatchRef.previousMatches.Clear();
         currState = States.Patrol;
     }
     #endregion
