@@ -78,6 +78,7 @@ public class Projectile : MonoBehaviour {
             if (shootingRef == null) {
                 if (firingAI.lover) {
                     aiRef = hit.transform.GetComponent<AI>();
+                    aiRef.OverrideTarget(firingAI.transform);
                     aiRef.LoverCombatRef.BufferPerson(aiRef);
                 }
                 else {
@@ -94,6 +95,8 @@ public class Projectile : MonoBehaviour {
             }
             //Send the player a reference to the hater object
             aiRef = hit.transform.GetComponent<AI>();
+            //Override the target to the player
+            aiRef.OverrideTarget(shootingRef.transform);
             shootingRef.BufferPerson(aiRef);
             return true;
 

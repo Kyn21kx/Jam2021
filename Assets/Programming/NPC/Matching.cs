@@ -32,8 +32,6 @@ public class Matching : MonoBehaviour {
     private AI selfAI;
     public List<Matching> previousMatches;
     [SerializeField]
-    private GameObject symbolCountPref;
-    [SerializeField]
     private GameObject[] symbols;
     [SerializeField]
     private Sprite male, female, nBinary;
@@ -51,7 +49,6 @@ public class Matching : MonoBehaviour {
         auxMen = men;
         auxWomen = women;
         auxNonBi = nonBi;
-        symbols = new GameObject[3];
         previousMatches = new List<Matching>();
 
         UpdateSymbols(start: true);
@@ -62,22 +59,51 @@ public class Matching : MonoBehaviour {
 
     private void Update() {
         UpdateSymbols();
+        ManageSpawnCompatibility();
     }
 
-    public void SetRandValues() {
-        genderId = (Gender)Random.Range(0, 3);
+    private void ManageSpawnCompatibility() {
+        bool contains = Utilities.spawner.previous.Contains(this);
+        if (!contains) return;
+        int[] preferences = { men, women, nonBi };
+        int[] initialPreferences = { auxMen, auxWomen, auxNonBi };
+        bool result = true;
+        for (int i = 0; i < 3; i++) {
+            if (initialPreferences[i] > 0 && preferences[i] > 0)
+                result = false;
+        }
+        if (result)
+            Utilities.spawner.previous.Remove(this);
+    }
+
+    public void SetRandValues(List<Matching> previous) {
+        int accumulative = 0;
+        int rElement = Random.Range(0, previous.Count);
+        int rElement2 = Random.Range(0, previous.Count);
         Randomize:
-        int p = Random.Range(0, 3);
-        if (p == 2)
-            men = Random.Range(0, 5);
-        p = Random.Range(0, 2);
-        if (p == 1)
-            women = Random.Range(0, 5);
-        p = Random.Range(0, 2);
-        if (p == 0)
-            nonBi = Random.Range(0, 5);
+        genderId = (Gender)Random.Range(0, 3);
+        int p = Random.Range(0, 2);
+        if (p == 2) {
+            men = Random.Range(0, 2);
+            accumulative += 2;
+        }
+        p = Random.Range(0, 2 + accumulative);
+        if (p == 1) {
+            women = Random.Range(0, 2);
+            accumulative += 2;
+        }
+        p = Random.Range(0, 2 + accumulative);
+        if (p == 0) {
+            nonBi = Random.Range(0, 2 + accumulative);
+        }
         if (men <= 0 && women <= 0 && nonBi <= 0)
             goto Randomize;
+        if (previous.Count > 0) {
+            //One in 3 chances that it will randomize again for a better match
+            //Simulate pairing
+            if (!Match(previous[rElement]) && !Match(previous[rElement2]))
+                goto Randomize;
+        }
         Initialize();
     }
 
@@ -87,22 +113,18 @@ public class Matching : MonoBehaviour {
         Sprite[] sprites = { male, female, nBinary };
         for (int i = 0; i < 3; i++) {
             if (preferences[i] > 0) {
-                
-                if (symbols[i] == null)
-                    symbols[i] = Instantiate(symbolCountPref, transform);
-                
                 symbols[i].transform.localPosition = new Vector2(offsetX, symbols[i].transform.localPosition.y);
                 offsetX += 0.3f;
             }
             else if (symbols[i] != null)
-                Destroy(symbols[i]);
+                symbols[i].SetActive(false);
 
             SpawnSymbol(symbols[i], sprites[i], preferences[i], start);
         }
     }
 
     private void SpawnSymbol(GameObject obj, Sprite sprite, int amnt, bool start) {
-        if (obj == null) return;
+        if (!obj.activeInHierarchy) return;
         if (start) {
             SpriteRenderer renderer = obj.GetComponent<SpriteRenderer>();
             renderer.sprite = sprite;

@@ -57,7 +57,7 @@ public class AI : MonoBehaviour {
         Initialize();
     }
 
-    private void Initialize() {
+    public void Initialize() {
         MatchRef = GetComponent<Matching>();
         LoverCombatRef = GetComponent<LoverCombat>();
         movRef = GetComponent<NPMovement>();
@@ -68,6 +68,8 @@ public class AI : MonoBehaviour {
         CanAttack = true;
         conversionBars.SetActive(false);
         nutzTime = 0f;
+        if (ranged)
+            actionRange = 20f;
         SetNewLHValues();
         nodePosition = movRef.TargetPosHolder.position;
     }
@@ -77,6 +79,11 @@ public class AI : MonoBehaviour {
         //FSM
         FiniteStateMachine();
         ManageConversionValues();
+    }
+
+    public void OverrideTarget(Transform target) {
+        CurrentTarget = target;
+        currState = States.Chase;
     }
 
     private void ManageConversionValues() {
@@ -330,6 +337,7 @@ public class AI : MonoBehaviour {
     public void ConvertToLover() {
         if (lover) return;
         Utilities.scoreManager.score++;
+        Utilities.spawner.previous.Remove(MatchRef);
         lover = true;
         SetNewLHValues();
         CurrentTarget = null;
