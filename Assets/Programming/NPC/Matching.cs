@@ -78,31 +78,56 @@ public class Matching : MonoBehaviour {
 
     public void SetRandValues(List<Matching> previous) {
         int accumulative = 0;
+        int attempts = 0;
         int rElement = Random.Range(0, previous.Count);
         int rElement2 = Random.Range(0, previous.Count);
         Randomize:
+        if (attempts >= 2) {
+            //Instead of randomizing, just create a direct match
+            Matching other = previous[rElement];
+            int[] preferences = { other.men, other.women, other.nonBi };
+            for (int i = 0; i < 3; i++) {
+                if (preferences[i] > 0) {
+                    //Stop, assign a corresponding gender
+                    genderId = (Gender)i;
+                    switch (other.GenderId) {
+                        case Gender.Man:
+                            men = 1;
+                            break;
+                        case Gender.Woman:
+                            women = 1;
+                            break;
+                        case Gender.NonBinary:
+                            nonBi = 1;
+                            break;;
+                    }
+                    return;
+                }
+            }
+        }
         genderId = (Gender)Random.Range(0, 3);
-        int p = Random.Range(0, 2);
+        int p = Random.Range(0, 2 + accumulative);
         if (p == 2) {
-            men = Random.Range(0, 2);
-            accumulative += 2;
+            men = Random.Range(0, 5) / 2;
+            accumulative += 5;
         }
         p = Random.Range(0, 2 + accumulative);
         if (p == 1) {
-            women = Random.Range(0, 2);
-            accumulative += 2;
+            women = Random.Range(0, 5) / 2;
+            accumulative += 5;
         }
         p = Random.Range(0, 2 + accumulative);
         if (p == 0) {
-            nonBi = Random.Range(0, 2 + accumulative);
+            nonBi = Random.Range(0, 5) / 2;
         }
         if (men <= 0 && women <= 0 && nonBi <= 0)
             goto Randomize;
         if (previous.Count > 0) {
-            //One in 3 chances that it will randomize again for a better match
-            //Simulate pairing
-            if (!Match(previous[rElement]) && !Match(previous[rElement2]))
+            if (!Match(previous[rElement2]) && !Match(previous[rElement])) {
+                accumulative += 2;
+                attempts++;
                 goto Randomize;
+            }
         }
         Initialize();
     }
@@ -113,6 +138,8 @@ public class Matching : MonoBehaviour {
         Sprite[] sprites = { male, female, nBinary };
         for (int i = 0; i < 3; i++) {
             if (preferences[i] > 0) {
+                if (!AI_Ref.lover)
+                    symbols[i].SetActive(true);
                 symbols[i].transform.localPosition = new Vector2(offsetX, symbols[i].transform.localPosition.y);
                 offsetX += 0.3f;
             }
@@ -214,7 +241,6 @@ public class Matching : MonoBehaviour {
         for (int i = 0; i < totalLovers.Count; i++) {
             totalLovers[i].selfAI.ConvertToLover();
         }
-        selfAI.ConvertToLover();
         
     }
 
@@ -234,7 +260,8 @@ public class Matching : MonoBehaviour {
         women = auxWomen;
         nonBi = auxNonBi;
         IncreaseMatchesAndRemove();
-        UpdateSymbols(start: true);
+        Utilities.gameManager.lovers.Remove(AI_Ref);
+        Utilities.spawner.previous.Add(this);
     }
 
     private void ReduceByMatch(Matching other) {

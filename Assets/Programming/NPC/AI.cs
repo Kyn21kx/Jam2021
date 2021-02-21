@@ -79,6 +79,21 @@ public class AI : MonoBehaviour {
         //FSM
         FiniteStateMachine();
         ManageConversionValues();
+        CorrectConversion();
+    }
+
+    private void CorrectConversion() {
+        if (!MatchRef.Paired || lover) return;
+        bool result = true;
+        //Check that everyone on the previous matches is a lover
+        for (int i = 0; i < MatchRef.previousMatches.Count; i++) {
+            if (MatchRef != MatchRef.previousMatches[i] && !MatchRef.previousMatches[i].AI_Ref.lover) {
+                result = false;
+                break;
+            }
+        }
+        if (result)
+            ConvertToLover();
     }
 
     public void OverrideTarget(Transform target) {
@@ -120,8 +135,14 @@ public class AI : MonoBehaviour {
                     RunAway();
                 break;
             case States.Nutz:
-                if (nutzTime == 0f)
+                if (nutzTime == 0f) {
                     RecoverStun();
+                    //Create random magnitude as well
+                    float magnitude = Random.Range(10f, 20f);
+                    Vector2 nPos = Utilities.GetRandomVector(0f, 1f) * magnitude;
+                    //Random position from 0 to 1
+                    nodePosition = nPos;
+                }
                 if (nutzTime > 4f) {
                     GetComponent<SpriteRenderer>().color = Color.gray;
                     nutzTime = 0f;
@@ -129,10 +150,17 @@ public class AI : MonoBehaviour {
                     currState = States.Patrol;
                     break;
                 }
+                if (movRef.HasArrived(nodePosition, 0.5f)) {
+                    //Create random magnitude as well
+                    float magnitude = Random.Range(10f, 20f);
+                    Vector2 nPos = Utilities.GetRandomVector(0f, 1f) * magnitude;
+                    //Random position from 0 to 1
+                    nodePosition = nPos;
+                }
                 movRef.Speed = movRef.AuxSpeed * 2.5f;
                 GetComponent<SpriteRenderer>().color = Color.red;
                 nutzTime += Time.deltaTime;
-                StartCoroutine(GoNutz(0.5f));
+                movRef.Move(nodePosition);
                 break;
             case States.Loving:
                 CurrentTarget = Detect();
@@ -209,17 +237,6 @@ public class AI : MonoBehaviour {
         movRef.Move(nodePosition);
     }
 
-    private IEnumerator GoNutz(float changeTime) {
-        //Create random magnitude as well
-        float magnitude = Random.Range(10f, 20f);
-        Vector2 nPos = Utilities.GetRandomVector(0f, 1f) * magnitude;
-        //Random position from 0 to 1
-        nodePosition = nPos;
-        yield return new WaitForSeconds(changeTime);
-
-        movRef.Move(nodePosition);
-    }
-
     private void RunAway() {
         Vector2 toTarget = CurrentTarget.position - transform.position;
         float sqrDistance = toTarget.sqrMagnitude;
@@ -242,6 +259,9 @@ public class AI : MonoBehaviour {
     }
 
     private void Chase() {
+        GetComponent<SpriteRenderer>().color = Color.gray;
+        nutzTime = 0f;
+        movRef.Speed = movRef.AuxSpeed;
         //Maybe refactor this a bit
         //If we detect the player instead of a lover, switch to them [IN REVIEW]
         Transform tmp = Detect();
@@ -335,9 +355,10 @@ public class AI : MonoBehaviour {
     }
     #region Conversion
     public void ConvertToLover() {
-        if (lover) return;
+        if (lover || !MatchRef.Paired) return;
         Utilities.scoreManager.score++;
         Utilities.spawner.previous.Remove(MatchRef);
+        Utilities.gameManager.lovers.Add(this);
         lover = true;
         SetNewLHValues();
         CurrentTarget = null;
@@ -351,7 +372,6 @@ public class AI : MonoBehaviour {
         MatchRef.RestorePreferences();
         movRef.canMove = true;
         movRef.ResumePath();
-        MatchRef.previousMatches.Clear();
         currState = States.Patrol;
     }
     #endregion
