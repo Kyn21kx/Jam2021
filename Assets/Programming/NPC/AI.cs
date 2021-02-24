@@ -363,9 +363,11 @@ public class AI : MonoBehaviour {
     #region Conversion
     public void ConvertToLover() {
         if (lover || !MatchRef.Paired) return;
-        Utilities.scoreManager.score++;
         Utilities.spawner.previous.Remove(MatchRef);
         Utilities.gameManager.lovers.Add(this);
+        //Redundant, but avoids bugs
+        if (!lover)
+            Utilities.scoreManager.score++;
         lover = true;
         SetNewLHValues();
         for (int i = 0; i < MatchRef.previousMatches.Count; i++) {

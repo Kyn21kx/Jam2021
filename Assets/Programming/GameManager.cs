@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour {
     #endregion
 
     private void Start() {
+        Time.timeScale = 1f;
         Utilities.playerRef = GameObject.FindGameObjectWithTag("Player").transform;
         Utilities.scoreManager = FindObjectOfType<ScoreManager>();
         Utilities.spawner = FindObjectOfType<Spawner>();
@@ -31,11 +32,12 @@ public class GameManager : MonoBehaviour {
 
     public void Buffer(AI personRef, AI directBuffer=null) {
         personRef.Stun(personRef.MatchRef.matchingTime);
-        if (buffers.Contains(personRef) || personRef.MatchRef.Paired) return;
+        if (personRef.MatchRef.Paired) return;
         if (directBuffer != null) {
             BufferPerson(personRef, directBuffer);
             return;
         }
+        if (buffers.Contains(personRef)) return;
         buffers.Add(personRef);
         for (int i = 0; i < buffers.Count; i++) {
             BufferPerson(personRef, i);
@@ -45,7 +47,7 @@ public class GameManager : MonoBehaviour {
     public void BufferPerson(AI personRef, AI other) {
         personRef.BeginMatch();
         //Pair them
-        if (ValidTargets(personRef, other)) {
+        if (personRef != other) {
             var match1 = personRef.MatchRef;
             var lover = other.MatchRef;
             lover.LoverPair(match1);
@@ -101,7 +103,7 @@ public class GameManager : MonoBehaviour {
     }
 
     private bool ValidTargets(AI t1, AI t2) {
-        return t1 != t2 && (t1.OpenForMatch && t2.OpenForMatch && !t1.MatchRef.Paired && !t2.MatchRef.Paired) || t2.lover;
+        return t1 != t2 && (t1.OpenForMatch && t2.OpenForMatch && !t1.MatchRef.Paired && !t2.MatchRef.Paired);
     }
 
 }

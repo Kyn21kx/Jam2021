@@ -39,7 +39,9 @@ public class Spawner : MonoBehaviour {
         if ((int)interval % 3 == 0) {
             forceMatchEveryN++;
         }
-        interval *= 1.05f;
+        if (previous.Count < 2 && interval > 5f)
+            interval /= 2f;
+        interval *= 1.009f;
         Invoke("Spawn", interval);
     }
 

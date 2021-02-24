@@ -230,8 +230,9 @@ public class Matching : MonoBehaviour {
     }
 
     public void LoverPair(Matching other) {
+        if (other.previousMatches.Contains(this)) return;
         other.ReduceByMatch(this);
-
+        other.previousMatches.Add(this);
         //Really ugly thing
         if (other.Paired) {
             other.AI_Ref.ConvertToLover();
