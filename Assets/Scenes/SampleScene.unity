@@ -166,12 +166,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 541c08f5186d1c74aba057abd4bec76a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefab: {fileID: 6248478452662877799, guid: 3e6e698270fd60346ba8ea78f8eae8ef, type: 3}
-  interval: 1.5
-  forceMatchEveryN: 3
   previous: []
+  prefab: {fileID: 6248478452662877799, guid: 3e6e698270fd60346ba8ea78f8eae8ef, type: 3}
   borderX: {fileID: 348963815}
   borderY: {fileID: 630027282}
+  interval: 1.5
+  forceMatchEveryN: 3
 --- !u!1 &134870295
 GameObject:
   m_ObjectHideFlags: 0
@@ -968,7 +968,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: b12f6d10b2c82d640988de265fb80c65, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0
   m_Pitch: 1
   Loop: 1
   Mute: 0
