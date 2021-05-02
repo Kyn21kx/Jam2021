@@ -8,6 +8,8 @@ public class Shooting : MonoBehaviour {
 	public AI personBuffer;
 	[SerializeField]
 	private GameObject projectile;
+	[SerializeField]
+	private GameObject arrowIndicator;
 	private Camera cam;
 
 	[SerializeField]
@@ -21,6 +23,7 @@ public class Shooting : MonoBehaviour {
 	#endregion
 
 	private void Start() {
+		arrowIndicator.SetActive(false);
 		cam = Camera.main;
 		personBuffer = null;
 		holdTime = 0f;
@@ -47,23 +50,25 @@ public class Shooting : MonoBehaviour {
 	}
 
 	private void HoldShoot() {
-		if (Input.GetMouseButtonDown(0))
+		holdTime = Mathf.Clamp(holdTime, 0f, 2f);
+		float dis = (holdTime * (35f / 1.5f)) + 10f;
+		if (Input.GetMouseButtonDown(0) && !holding)
 			holding = true;
+
 		if (holding && Input.GetMouseButtonUp(0)) {
 			//d = x^(1.5f) - (x/2)
 			//Graphics to show it
-			holdTime = Mathf.Clamp(holdTime, 0f, 2f);
-			float d = (holdTime * (35f / 1.5f)) + 10;
-			//Debug.LogWarning("Distance: " + d);
+			arrowIndicator.SetActive(false);
 			holding = false;
 			holdTime = 0f;
 			Utilities.anim.SetBool("Holding", false);
-			Shoot(d);
+			Shoot(dis);
 		}
 		//Increment x 
 		if (holding) {
 			holdTime += Time.deltaTime;
 			Vector2 mousePos = cam.ScreenToWorldPoint(Input.mousePosition);
+			DisplayAimGuide(mousePos, dis);
 			float xValue = mousePos.x - transform.position.x;
 			if (xValue > 0) {
 				GetComponent<SpriteRenderer>().flipX = true;
@@ -130,6 +135,16 @@ public class Shooting : MonoBehaviour {
 			projInstance.Initiate(dir.normalized, shootingSpeed, this, distance);
 			onCooldown = true;
 		}
+	}
+
+	private void DisplayAimGuide(Vector2 mousePos, float mag) {
+		Vector2 dir = (mousePos - (Vector2)transform.position).normalized * mag;
+		//Get the angle for the mouse as tan^-1 (y / x)
+		float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+		//Put it in the position of the thing
+		arrowIndicator.SetActive(true);
+		arrowIndicator.transform.position =(Vector3)dir + transform.position;
+		arrowIndicator.transform.rotation = Quaternion.Euler(0, 0, angle - 90f);
 	}
 
 }
